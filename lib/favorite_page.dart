@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
-import 'home_page.dart';
-import 'battle_page.dart';
-import 'search_page.dart';
-import 'about_page.dart';
 import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 
 class FavoritePage extends StatefulWidget {
