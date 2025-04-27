@@ -32,8 +32,9 @@ class NavigationDrawer extends StatelessWidget {
           ),
           _drawerTile(
             context,
-            title: "Home Page",
+            title: "Home",
             selected: currentPage == AppPage.home,
+            icon: Icons.home,
             onTap: () {
               if (currentPage != AppPage.home) {
                 Navigator.pushReplacement(
@@ -49,8 +50,9 @@ class NavigationDrawer extends StatelessWidget {
           ),
           _drawerTile(
             context,
-            title: "Battle Page",
+            title: "Battle",
             selected: currentPage == AppPage.battle,
+            icon: Icons.sports_martial_arts,
             onTap: () {
               if (currentPage != AppPage.battle) {
                 Navigator.pushReplacement(
@@ -66,8 +68,9 @@ class NavigationDrawer extends StatelessWidget {
           ),
           _drawerTile(
             context,
-            title: "Search Page",
+            title: "Search",
             selected: currentPage == AppPage.search,
+            icon: Icons.search,
             onTap: () {
               if (currentPage != AppPage.search) {
                 Navigator.pushReplacement(
@@ -83,8 +86,9 @@ class NavigationDrawer extends StatelessWidget {
           ),
           _drawerTile(
             context,
-            title: "Favorites Page",
+            title: "Favorites",
             selected: currentPage == AppPage.favorites,
+            icon: Icons.star,
             onTap: () {
               if (currentPage != AppPage.favorites) {
                 Navigator.pushReplacement(
@@ -100,8 +104,9 @@ class NavigationDrawer extends StatelessWidget {
           ),
           _drawerTile(
             context,
-            title: "About Page",
+            title: "About",
             selected: currentPage == AppPage.about,
+            icon: Icons.info,
             onTap: () {
               if (currentPage != AppPage.about) {
                 Navigator.pushReplacement(
@@ -121,12 +126,13 @@ class NavigationDrawer extends StatelessWidget {
   }
 }
 
-// Helper for drawer tile with custom active style and margin
+// Helper for drawer tile with custom active style, margin, and icon
 Widget _drawerTile(
   BuildContext context, {
   required String title,
   required bool selected,
   required VoidCallback onTap,
+  required IconData icon,
 }) {
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 8), // Add margin left/right
@@ -135,11 +141,12 @@ Widget _drawerTile(
       borderRadius: BorderRadius.circular(8),
     ),
     child: ListTile(
+      leading: Icon(icon, color: selected ? NavigationDrawer.activeText : null),
       title: Text(
         title,
         style: TextStyle(
           color: selected ? NavigationDrawer.activeText : null,
-          fontWeight: selected ? FontWeight.bold : null,
+          fontWeight: selected ? FontWeight.normal : null,
         ),
       ),
       selected: selected,
