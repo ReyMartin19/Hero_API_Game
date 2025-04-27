@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'home_page.dart'; // Add this import
-import 'battle_page.dart'; // Add this import
-import 'favorite_page.dart'; // Add this import
 import 'database_helper.dart'; // Add this import
-import 'about_page.dart'; // Add this import
+import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 
 class SearchPage extends StatefulWidget {
   final String apiKey;
@@ -166,66 +163,9 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Search Heroes")),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text("Navigation", style: TextStyle(color: Colors.white)),
-            ),
-            ListTile(
-              title: const Text("Home Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(apiKey: widget.apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Battle Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BattlePage(apiKey: widget.apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Search Page"),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              title: const Text("Favorites Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FavoritePage(apiKey: widget.apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("About Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AboutPage(apiKey: widget.apiKey),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+      drawer: appnav.NavigationDrawer(
+        currentPage: appnav.AppPage.search,
+        apiKey: widget.apiKey,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // Add this import
-import 'battle_page.dart'; // Add this import
-import 'search_page.dart'; // Add this import
-import 'favorite_page.dart'; // Add this import
+import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 
 class AboutPage extends StatelessWidget {
   final String apiKey;
@@ -13,66 +10,9 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("About")),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text("Navigation", style: TextStyle(color: Colors.white)),
-            ),
-            ListTile(
-              title: const Text("Home Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(apiKey: apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Battle Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BattlePage(apiKey: apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Search Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchPage(apiKey: apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Favorites Page"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FavoritePage(apiKey: apiKey),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("About Page"),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-          ],
-        ),
+      drawer: appnav.NavigationDrawer(
+        currentPage: appnav.AppPage.about,
+        apiKey: apiKey,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
