@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'battle_page.dart';
@@ -18,6 +17,9 @@ class NavigationDrawer extends StatelessWidget {
     required this.apiKey,
   });
 
+  static const Color activeBg = Color(0x1F661FFF); // #661FFF at 12% opacity
+  static const Color activeText = Color(0xFF661FFF); // #661FFF at 100% opacity
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -28,8 +30,9 @@ class NavigationDrawer extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.blue),
             child: Text("Navigation", style: TextStyle(color: Colors.white)),
           ),
-          ListTile(
-            title: const Text("Home Page"),
+          _drawerTile(
+            context,
+            title: "Home Page",
             selected: currentPage == AppPage.home,
             onTap: () {
               if (currentPage != AppPage.home) {
@@ -44,8 +47,9 @@ class NavigationDrawer extends StatelessWidget {
               }
             },
           ),
-          ListTile(
-            title: const Text("Battle Page"),
+          _drawerTile(
+            context,
+            title: "Battle Page",
             selected: currentPage == AppPage.battle,
             onTap: () {
               if (currentPage != AppPage.battle) {
@@ -60,8 +64,9 @@ class NavigationDrawer extends StatelessWidget {
               }
             },
           ),
-          ListTile(
-            title: const Text("Search Page"),
+          _drawerTile(
+            context,
+            title: "Search Page",
             selected: currentPage == AppPage.search,
             onTap: () {
               if (currentPage != AppPage.search) {
@@ -76,8 +81,9 @@ class NavigationDrawer extends StatelessWidget {
               }
             },
           ),
-          ListTile(
-            title: const Text("Favorites Page"),
+          _drawerTile(
+            context,
+            title: "Favorites Page",
             selected: currentPage == AppPage.favorites,
             onTap: () {
               if (currentPage != AppPage.favorites) {
@@ -92,8 +98,9 @@ class NavigationDrawer extends StatelessWidget {
               }
             },
           ),
-          ListTile(
-            title: const Text("About Page"),
+          _drawerTile(
+            context,
+            title: "About Page",
             selected: currentPage == AppPage.about,
             onTap: () {
               if (currentPage != AppPage.about) {
@@ -112,4 +119,31 @@ class NavigationDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+// Helper for drawer tile with custom active style and margin
+Widget _drawerTile(
+  BuildContext context, {
+  required String title,
+  required bool selected,
+  required VoidCallback onTap,
+}) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 8), // Add margin left/right
+    decoration: BoxDecoration(
+      color: selected ? NavigationDrawer.activeBg : null,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: ListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          color: selected ? NavigationDrawer.activeText : null,
+          fontWeight: selected ? FontWeight.bold : null,
+        ),
+      ),
+      selected: selected,
+      onTap: onTap,
+    ),
+  );
 }

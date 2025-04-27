@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'database_helper.dart';
 import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import 'user_deck_widget.dart';
+import 'bot_deck_widget.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'result_card_container.dart';
 
 class BattlePage extends StatefulWidget {
   final String apiKey;
@@ -383,166 +387,6 @@ class _BattlePageState extends State<BattlePage> {
     );
   }
 
-  Widget _buildDeck(
-    String label,
-    List<Map<String, dynamic>> deck, {
-    bool isUserDeck = false,
-    int score = 0, // Add score parameter
-  }) {
-    final ScrollController scrollController = ScrollController();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "$label (Score: $score)", // Display score beside the label
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "${deck.length} Cards", // Display the number of cards remaining
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_left),
-              onPressed: () {
-                scrollController.animateTo(
-                  scrollController.offset - 200,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-            ),
-            Expanded(
-              child: SizedBox(
-                height: 200,
-                child: ListView.separated(
-                  controller: scrollController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: deck.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 18),
-                  itemBuilder: (context, index) {
-                    final hero = deck[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: GestureDetector(
-                        onTap:
-                            isUserDeck && decksReady
-                                ? () => _startBattle(hero)
-                                : null,
-                        child: MouseRegion(
-                          onEnter:
-                              isUserDeck
-                                  ? (_) => setState(() => hero['hover'] = true)
-                                  : null,
-                          onExit:
-                              isUserDeck
-                                  ? (_) => setState(() => hero['hover'] = false)
-                                  : null,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(
-                                    hero['hover'] == true ? 0.8 : 0.5,
-                                  ),
-                                  spreadRadius: hero['hover'] == true ? 4 : 2,
-                                  blurRadius: hero['hover'] == true ? 10 : 5,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.all(8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child:
-                                      isUserDeck
-                                          ? Image.network(
-                                            hero['image']['url'],
-                                            width: 160,
-                                            height: 160,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (_, __, ___) => const Icon(
-                                                  Icons.broken_image,
-                                                  size: 100,
-                                                ),
-                                          )
-                                          : const Icon(
-                                            Icons.question_mark,
-                                            size: 160,
-                                          ),
-                                ),
-                                const SizedBox(width: 60),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      isUserDeck ? hero['name'] : "???",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "Intelligence: ${isUserDeck ? hero['powerstats']['intelligence'] ?? 'N/A' : '???'}",
-                                    ),
-                                    Text(
-                                      "Strength: ${isUserDeck ? hero['powerstats']['strength'] ?? 'N/A' : '???'}",
-                                    ),
-                                    Text(
-                                      "Speed: ${isUserDeck ? hero['powerstats']['speed'] ?? 'N/A' : '???'}",
-                                    ),
-                                    Text(
-                                      "Durability: ${isUserDeck ? hero['powerstats']['durability'] ?? 'N/A' : '???'}",
-                                    ),
-                                    Text(
-                                      "Power: ${isUserDeck ? hero['powerstats']['power'] ?? 'N/A' : '???'}",
-                                    ),
-                                    Text(
-                                      "Combat: ${isUserDeck ? hero['powerstats']['combat'] ?? 'N/A' : '???'}",
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.arrow_right),
-              onPressed: () {
-                scrollController.animateTo(
-                  scrollController.offset + 200,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildDiceSpinner() {
     return Center(
       child: Image.asset(
@@ -572,34 +416,28 @@ class _BattlePageState extends State<BattlePage> {
     }
   }
 
-  Widget _buildHighlightedStat(String label, int? userStat, int? botStat) {
-    final isUserHigher =
-        userStat != null && botStat != null && userStat > botStat;
-
-    return Text(
-      "$label: ${userStat ?? 'N/A'}",
-      style: TextStyle(
-        color: isUserHigher ? Colors.green : Colors.black,
-        fontWeight: isUserHigher ? FontWeight.bold : FontWeight.normal,
-      ),
-    );
-  }
-
-  Widget _buildBotHighlightedStat(String label, int? userStat, int? botStat) {
-    final isBotHigher =
-        userStat != null && botStat != null && botStat > userStat;
-
-    return Text(
-      "$label: ${botStat ?? 'N/A'}",
-      style: TextStyle(
-        color: isBotHigher ? Colors.green : Colors.black,
-        fontWeight: isBotHigher ? FontWeight.bold : FontWeight.normal,
-      ),
+  Widget _buildResultContainer() {
+    // Always show the result card container, even if no card is picked yet
+    return ResultCardContainer(
+      selectedUserCard: selectedUserCard,
+      selectedBotCard: selectedBotCard,
+      userDeckLength: userDeck.length,
+      botDeckLength: botDeck.length,
+      battleResult: battleResult,
+      showDice: showDice,
+      isUserTurn: isUserTurn,
+      isDiceSpinning: isDiceSpinning,
+      diceResult: diceResult,
+      onRollDice: _rollDice,
+      buildDiceOrResult: _buildDiceOrResult,
+      isInitial: selectedUserCard == null && selectedBotCard == null,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool showResult = true; // Always show result card container
+
     return Scaffold(
       appBar: AppBar(title: const Text("Battle Page")),
       drawer: appnav.NavigationDrawer(
@@ -613,335 +451,33 @@ class _BattlePageState extends State<BattlePage> {
                 padding: const EdgeInsets.all(16),
                 child:
                     isLoadingDeck
-                        ? const Center(child: CircularProgressIndicator())
+                        ? Center(
+                          child: LoadingAnimationWidget.fourRotatingDots(
+                            color: Colors.blue,
+                            size: 48,
+                          ),
+                        )
                         : (userDeck.isEmpty || botDeck.isEmpty) &&
                             battleResult != null
                         ? _buildEndScreen()
                         : decksReady
-                        ? SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              _buildDeck(
-                                "Your Deck",
-                                userDeck,
-                                isUserDeck: true,
-                                score: userScore,
-                              ),
-                              const SizedBox(height: 20),
-                              if (selectedUserCard == null &&
-                                  selectedBotCard == null)
-                                const Text(
-                                  "Choose Your Hero",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              const SizedBox(height: 20),
-                              if (selectedUserCard != null &&
-                                  selectedBotCard != null) ...[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // User's selected card on the left
-                                    SizedBox(
-                                      width:
-                                          380, // Set the desired width for the container
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.withOpacity(
-                                                0.5,
-                                              ),
-                                              spreadRadius: 2,
-                                              blurRadius: 5,
-                                              offset: const Offset(0, 3),
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.fromLTRB(
-                                          16,
-                                          8,
-                                          8,
-                                          8,
-                                        ), // Adjusted left padding to move right
-                                        child: Row(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: Image.network(
-                                                selectedUserCard!['image']['url'],
-                                                width:
-                                                    160, // Adjusted image width
-                                                height:
-                                                    160, // Adjusted image height
-                                                fit: BoxFit.cover,
-                                                errorBuilder:
-                                                    (_, __, ___) => const Icon(
-                                                      Icons.broken_image,
-                                                      size: 80,
-                                                    ),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width:
-                                                  60, // Increased spacing between image and text
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  selectedUserCard!['name'],
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                _buildHighlightedStat(
-                                                  "Intelligence",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['intelligence'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['intelligence'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildHighlightedStat(
-                                                  "Strength",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['strength'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['strength'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildHighlightedStat(
-                                                  "Speed",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['speed'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['speed'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildHighlightedStat(
-                                                  "Durability",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['durability'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['durability'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildHighlightedStat(
-                                                  "Power",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['power'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['power'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildHighlightedStat(
-                                                  "Combat",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['combat'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['combat'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // Result in the center
-                                    Expanded(
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            "Result: $battleResult",
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          _buildDiceOrResult(), // Show dice GIF or result
-                                          if (showDice && isUserTurn)
-                                            ElevatedButton(
-                                              onPressed: _rollDice,
-                                              child: const Icon(
-                                                Icons.casino,
-                                              ), // Changed text to dice icon
-                                            ),
-                                          if (showDice && !isUserTurn)
-                                            const Text(
-                                              "Bot is spinning...",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Bot's selected card on the right
-                                    SizedBox(
-                                      width:
-                                          360, // Set the desired width for the bot's selected card container
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.withOpacity(
-                                                0.5,
-                                              ),
-                                              spreadRadius: 2,
-                                              blurRadius: 5,
-                                              offset: const Offset(0, 3),
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.all(8),
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  selectedBotCard!['name'],
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                _buildBotHighlightedStat(
-                                                  "Intelligence",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['intelligence'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['intelligence'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildBotHighlightedStat(
-                                                  "Strength",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['strength'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['strength'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildBotHighlightedStat(
-                                                  "Speed",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['speed'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['speed'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildBotHighlightedStat(
-                                                  "Durability",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['durability'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['durability'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildBotHighlightedStat(
-                                                  "Power",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['power'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['power'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                                _buildBotHighlightedStat(
-                                                  "Combat",
-                                                  int.tryParse(
-                                                    selectedUserCard!['powerstats']['combat'] ??
-                                                        '0',
-                                                  ),
-                                                  int.tryParse(
-                                                    selectedBotCard!['powerstats']['combat'] ??
-                                                        '0',
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              width:
-                                                  70, // Increased spacing between text and image
-                                            ),
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: Image.network(
-                                                selectedBotCard!['image']['url'],
-                                                width:
-                                                    160, // Adjusted image width
-                                                height:
-                                                    160, // Adjusted image height
-                                                fit: BoxFit.cover,
-                                                errorBuilder:
-                                                    (_, __, ___) => const Icon(
-                                                      Icons.broken_image,
-                                                      size: 80,
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                        ? ScrollConfiguration(
+                          behavior: _NoScrollbarBehavior(),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                UserDeckWidget(
+                                  deck: userDeck,
+                                  score: userScore,
+                                  decksReady: decksReady,
+                                  onCardTap: _startBattle,
                                 ),
                                 const SizedBox(height: 20),
+                                _buildResultContainer(),
+                                const SizedBox(height: 20),
+                                BotDeckWidget(deck: botDeck, score: botScore),
                               ],
-                              const SizedBox(
-                                height: 20,
-                              ), // Reduced spacing above bot deck
-                              _buildDeck("Bot Deck", botDeck, score: botScore),
-                            ],
+                            ),
                           ),
                         )
                         : Center(
@@ -952,5 +488,92 @@ class _BattlePageState extends State<BattlePage> {
                         ),
               ),
     );
+  }
+}
+
+class _ThreeDotsLoader extends StatefulWidget {
+  const _ThreeDotsLoader();
+
+  @override
+  State<_ThreeDotsLoader> createState() => _ThreeDotsLoaderState();
+}
+
+class _ThreeDotsLoaderState extends State<_ThreeDotsLoader>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _dotOne;
+  late Animation<double> _dotTwo;
+  late Animation<double> _dotThree;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+    _dotOne = Tween<double>(begin: 0, end: 8).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeInOut),
+      ),
+    );
+    _dotTwo = Tween<double>(begin: 0, end: 8).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeInOut),
+      ),
+    );
+    _dotThree = Tween<double>(begin: 0, end: 8).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.4, 1.0, curve: Curves.easeInOut),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildDot(Animation<double> animation) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder:
+          (context, child) => Padding(
+            padding: EdgeInsets.only(bottom: animation.value),
+            child: child,
+          ),
+      child: Container(
+        width: 16,
+        height: 16,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: const BoxDecoration(
+          color: Colors.blue,
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [_buildDot(_dotOne), _buildDot(_dotTwo), _buildDot(_dotThree)],
+    );
+  }
+}
+
+class _NoScrollbarBehavior extends ScrollBehavior {
+  @override
+  Widget buildScrollbar(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return child; // disables the scrollbar
   }
 }
