@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'database_helper.dart'; // Add this import
-import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
-import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'database_helper.dart';
+import 'navigation_drawer.dart' as appnav;
 
-class SearchPage extends StatefulWidget {
+class SearchPageMobile extends StatefulWidget {
   final String apiKey;
 
-  const SearchPage({super.key, required this.apiKey});
+  const SearchPageMobile({super.key, required this.apiKey});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchPageMobile> createState() => _SearchPageMobileState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageMobileState extends State<SearchPageMobile> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _heroes = [];
   bool _isLoading = false;
@@ -56,11 +55,10 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _addToFavorites(Map<String, dynamic> hero) async {
-    // Check if the hero already exists in the favorites
     final existingFavorites = await DatabaseHelper.instance.getFavoriteHeroes();
     final isAlreadyFavorite = existingFavorites.any(
       (favorite) => favorite['id'] == hero['id'],
-    ); // Compare by hero ID
+    );
 
     if (isAlreadyFavorite) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,7 +67,6 @@ class _SearchPageState extends State<SearchPage> {
       return;
     }
 
-    // Add the hero to favorites if not already added
     await DatabaseHelper.instance.addFavoriteHero(hero);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("${hero['name']} added to favorites!")),
@@ -81,25 +78,23 @@ class _SearchPageState extends State<SearchPage> {
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-      ), // Increased border radius
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Added padding around the card
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(
-                12,
-              ), // Adjusted border radius for the image
+              borderRadius: BorderRadius.circular(12),
               child: Image.network(
                 hero['image']['url'],
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,
-                errorBuilder:
-                    (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.broken_image, size: 40),
               ),
             ),
-            const SizedBox(width: 16), // Added spacing between image and text
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,9 +107,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ), // Added spacing between name and buttons
+                  const SizedBox(height: 30),
                   Row(
                     children: [
                       Expanded(
@@ -122,14 +115,10 @@ class _SearchPageState extends State<SearchPage> {
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
                             vertical: 4.0,
-                          ), // Added padding
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(
-                              0x1F661FFF,
-                            ), // Background color with 12% opacity
-                            borderRadius: BorderRadius.circular(
-                              6,
-                            ), // Increased border radius
+                            color: const Color(0x1F661FFF),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +139,7 @@ class _SearchPageState extends State<SearchPage> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Color(0xFF661FFF),
-                                ), // Text color with 100% opacity
+                                ),
                               ),
                             ],
                           ),
@@ -166,14 +155,10 @@ class _SearchPageState extends State<SearchPage> {
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
                             vertical: 4.0,
-                          ), // Added padding
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(
-                              0x1F661FFF,
-                            ), // Background color with 12% opacity
-                            borderRadius: BorderRadius.circular(
-                              6,
-                            ), // Increased border radius
+                            color: const Color(0x1F661FFF),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +172,6 @@ class _SearchPageState extends State<SearchPage> {
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                                 onPressed: () {
-                                  // Add functionality for "More Info" button
                                   debugPrint(
                                     "More Info clicked for ${hero['name']}",
                                   );
@@ -199,7 +183,7 @@ class _SearchPageState extends State<SearchPage> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Color(0xFF661FFF),
-                                ), // Text color with 100% opacity
+                                ),
                               ),
                             ],
                           ),
@@ -218,7 +202,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 700;
     return Scaffold(
       appBar: AppBar(title: const Text("Search Heroes")),
       drawer: appnav.NavigationDrawer(
@@ -230,7 +213,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           children: [
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800), // Set max width
+              constraints: const BoxConstraints(maxWidth: 800),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
@@ -249,40 +232,17 @@ class _SearchPageState extends State<SearchPage> {
             ),
             const SizedBox(height: 16),
             if (_isLoading)
-              Expanded(
-                child: Center(
-                  child: LoadingAnimationWidget.fourRotatingDots(
-                    color: Colors.blue,
-                    size: 48,
-                  ),
-                ),
-              )
+              const Center(child: CircularProgressIndicator())
             else if (_heroes.isEmpty)
               const Center(child: Text("No heroes found."))
             else
               Expanded(
-                child:
-                    isMobile
-                        ? ListView.builder(
-                          itemCount: _heroes.length,
-                          itemBuilder: (context, index) {
-                            return _buildHeroCard(_heroes[index]);
-                          },
-                        )
-                        : GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 5,
-                                crossAxisSpacing: 2,
-                                mainAxisSpacing: 8,
-                                childAspectRatio:
-                                    1.8, // Wider to fit image + text layout
-                              ),
-                          itemCount: _heroes.length,
-                          itemBuilder: (context, index) {
-                            return _buildHeroCard(_heroes[index]);
-                          },
-                        ),
+                child: ListView.builder(
+                  itemCount: _heroes.length,
+                  itemBuilder: (context, index) {
+                    return _buildHeroCard(_heroes[index]);
+                  },
+                ),
               ),
           ],
         ),

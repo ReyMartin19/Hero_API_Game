@@ -306,32 +306,32 @@ class DatabaseHelper {
   }
 
   Future<void> removeFavoriteHero(int heroId) async {
-  final db = await database;
-  
-  // Get all favorites to find matching hero
-  final favorites = await db.query('favorite_heroes');
-  
-  for (var fav in favorites) {
-    try {
-      final heroData = json.decode(fav['hero_data'] as String);
-      // Compare IDs - handle both String and int types
-      if (heroData['id'].toString() == heroId.toString()) {
-        // Delete by database row ID
-        final rowsDeleted = await db.delete(
-          'favorite_heroes',
-          where: 'id = ?',
-          whereArgs: [fav['id']],
-        );
-        
-        debugPrint('Deleted $rowsDeleted row(s) for hero ID $heroId');
-        return;
+    final db = await database;
+
+    // Get all favorites to find matching hero
+    final favorites = await db.query('favorite_heroes');
+
+    for (var fav in favorites) {
+      try {
+        final heroData = json.decode(fav['hero_data'] as String);
+        // Compare IDs - handle both String and int types
+        if (heroData['id'].toString() == heroId.toString()) {
+          // Delete by database row ID
+          final rowsDeleted = await db.delete(
+            'favorite_heroes',
+            where: 'id = ?',
+            whereArgs: [fav['id']],
+          );
+
+          debugPrint('Deleted $rowsDeleted row(s) for hero ID $heroId');
+          return;
+        }
+      } catch (e) {
+        debugPrint('Error processing favorite: $e');
       }
-    } catch (e) {
-      debugPrint('Error processing favorite: $e');
     }
+
+    debugPrint('Hero ID $heroId not found in database');
+    throw Exception('Hero not found in database');
   }
-  
-  debugPrint('Hero ID $heroId not found in database');
-  throw Exception('Hero not found in database');
-}
 }

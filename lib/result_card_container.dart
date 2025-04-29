@@ -63,7 +63,7 @@ class ResultCardContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 selectedUserCard!['image']['url'],
-                width: 100,
+                width: 90,
                 height: 180, // Increased height
                 fit: BoxFit.cover,
                 errorBuilder:
@@ -71,7 +71,7 @@ class ResultCardContainer extends StatelessWidget {
               ),
             )
             : Container(
-              width: 100,
+              width: 90,
               height: 160, // Increased height
               decoration: BoxDecoration(
                 color: Colors.grey[300],
@@ -90,7 +90,7 @@ class ResultCardContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 selectedBotCard!['image']['url'],
-                width: 100,
+                width: 90,
                 height: 180, // Increased height
                 fit: BoxFit.cover,
                 errorBuilder:
@@ -98,7 +98,7 @@ class ResultCardContainer extends StatelessWidget {
               ),
             )
             : Container(
-              width: 100,
+              width: 90,
               height: 160, // Increased height
               decoration: BoxDecoration(
                 color: Colors.grey[300],
@@ -203,7 +203,7 @@ class ResultCardContainer extends StatelessWidget {
               child: Container(
                 width: statLabelWidth,
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(202, 57, 164, 251),
                   borderRadius: BorderRadius.circular(6),
@@ -265,16 +265,16 @@ class ResultCardContainer extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 8),
                 // User stats or placeholder (fixed width)
                 userStats,
-                const SizedBox(width: 14),
+                const SizedBox(width: 8),
                 // Stat labels with blue background (fixed width)
                 statLabelColumn,
-                const SizedBox(width: 14),
+                const SizedBox(width: 8),
                 // Bot stats or placeholder (fixed width)
                 botStats,
-                const SizedBox(width: 14),
+                const SizedBox(width: 8),
                 // Bot image and name
                 Column(
                   children: [
