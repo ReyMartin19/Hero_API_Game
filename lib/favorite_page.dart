@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import 'favorite_page_mobile.dart'; // <-- Add this import
+import 'hero_info.dart'; // <-- Add this import
 
 class FavoritePage extends StatefulWidget {
   final String apiKey;
@@ -75,34 +77,17 @@ class _FavoritePageState extends State<FavoritePage> {
   Widget _buildStatRow(String label, dynamic value) {
     final int statValue = int.tryParse(value ?? '0') ?? 0;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center, // Align items vertically
       children: [
         SizedBox(
-          width: 100, // Fixed width for the label
-          child: Text(
-            label,
-            style: const TextStyle(fontSize: 14, color: Colors.white),
-          ),
+          width: 90,
+          child: Text(label, style: const TextStyle(fontSize: 14)),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: statValue / 100,
-              backgroundColor: Colors.grey[300],
-              color: Colors.blue,
-              minHeight: 10,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
         SizedBox(
-          width: 40, // Fixed width for percentage text
+          width: 40,
           child: Text(
-            "$statValue%",
-            style: const TextStyle(fontSize: 12, color: Colors.white),
-            textAlign: TextAlign.right, // Align text to the right
+            "${value ?? 'N/A'}",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            textAlign: TextAlign.right,
           ),
         ),
       ],
@@ -111,90 +96,84 @@ class _FavoritePageState extends State<FavoritePage> {
 
   Widget _buildHeroCard(Map<String, dynamic> hero) {
     return Card(
-      elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(
-          12,
-        ), // Ensure content respects border radius
-        child: Container(
-          color: Colors.black, // Set container background to black
-          child: Center(
-            // Add Center widget to center content vertically
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min, // Center the content vertically
-              children: [
-                const SizedBox(height: 16), // Add spacing above the image
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blue.withOpacity(
-                          0.6,
-                        ), // Glowing blue color
-                        blurRadius: 100, // Glow intensity
-                        spreadRadius: 0, // Glow spread
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 80, // Set radius for the circular image
-                    backgroundImage: NetworkImage(hero['image']['url']),
-                    onBackgroundImageError:
-                        (_, __) => const Icon(
-                          Icons.broken_image,
-                          size: 80,
-                          color: Colors.white,
-                        ),
-                  ),
-                ),
-                const SizedBox(height: 16), // Add spacing below the image
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        hero['name'],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white, // Set text color to white
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildStatRow(
-                        "🧠 Intelligence",
-                        hero['powerstats']['intelligence'],
-                      ),
-                      _buildStatRow(
-                        "💪 Strength",
-                        hero['powerstats']['strength'],
-                      ),
-                      _buildStatRow("⚡ Speed", hero['powerstats']['speed']),
-                      _buildStatRow(
-                        "🛡️ Durability",
-                        hero['powerstats']['durability'],
-                      ),
-                      _buildStatRow("🔥 Power", hero['powerstats']['power']),
-                      _buildStatRow("⚔️ Combat", hero['powerstats']['combat']),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _removeFromFavorites(hero['id']),
-                    ),
-                  ],
-                ),
-              ],
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                hero['image']['url'],
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+                errorBuilder:
+                    (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+              ),
             ),
-          ),
+            const SizedBox(width: 16), // Added spacing between image and text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    hero['name'],
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ), // Spacing between name and buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _HoverButton(
+                          onTap: () => _removeFromFavorites(hero['id']),
+                          icon: Icons.delete,
+                          label: "Delete",
+                          normalBg: const Color(0x1F661FFF),
+                          hoverBg: const Color(0x33FF0000),
+                          normalIconColor: Colors.red,
+                          hoverIconColor: Colors.white,
+                          normalTextColor: Colors.red,
+                          hoverTextColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _HoverButton(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => HeroInfo(hero: hero),
+                              ),
+                            );
+                          },
+                          icon: Icons.info_outline,
+                          label: "More Info",
+                          normalBg: const Color(0x1F661FFF),
+                          hoverBg: const Color(0x33661FFF),
+                          normalIconColor: const Color(0xFF661FFF),
+                          hoverIconColor: Colors.white,
+                          normalTextColor: const Color(0xFF661FFF),
+                          hoverTextColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -202,6 +181,10 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
+    if (isMobile) {
+      return FavoritePageMobile(apiKey: widget.apiKey);
+    }
     return Scaffold(
       appBar: AppBar(title: const Text("Favorite Heroes")),
       drawer: appnav.NavigationDrawer(
@@ -220,10 +203,10 @@ class _FavoritePageState extends State<FavoritePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.7,
+                    crossAxisCount: 5,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1.8,
                   ),
                   itemCount: _favorites.length,
                   itemBuilder: (context, index) {
@@ -231,6 +214,77 @@ class _FavoritePageState extends State<FavoritePage> {
                   },
                 ),
               ),
+    );
+  }
+}
+
+class _HoverButton extends StatefulWidget {
+  final VoidCallback onTap;
+  final IconData icon;
+  final String label;
+  final Color normalBg;
+  final Color hoverBg;
+  final Color normalIconColor;
+  final Color hoverIconColor;
+  final Color normalTextColor;
+  final Color hoverTextColor;
+
+  const _HoverButton({
+    required this.onTap,
+    required this.icon,
+    required this.label,
+    required this.normalBg,
+    required this.hoverBg,
+    required this.normalIconColor,
+    required this.hoverIconColor,
+    required this.normalTextColor,
+    required this.hoverTextColor,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_HoverButton> createState() => _HoverButtonState();
+}
+
+class _HoverButtonState extends State<_HoverButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: widget.onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          decoration: BoxDecoration(
+            color: _hovered ? widget.hoverBg : widget.normalBg,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                widget.icon,
+                color:
+                    _hovered ? widget.hoverIconColor : widget.normalIconColor,
+                size: 20,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color:
+                      _hovered ? widget.hoverTextColor : widget.normalTextColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

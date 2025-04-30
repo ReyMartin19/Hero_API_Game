@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'database_helper.dart'; // Add this import
 import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'hero_info.dart'; // <-- Add this import
 
 class SearchPage extends StatefulWidget {
   final String apiKey;
@@ -118,42 +119,16 @@ class _SearchPageState extends State<SearchPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ), // Added padding
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0x1F661FFF,
-                            ), // Background color with 12% opacity
-                            borderRadius: BorderRadius.circular(
-                              6,
-                            ), // Increased border radius
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.star_border,
-                                  color: Color(0xFF661FFF),
-                                ),
-                                iconSize: 20,
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                onPressed: () => _addToFavorites(hero),
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                "Favorite",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Color(0xFF661FFF),
-                                ), // Text color with 100% opacity
-                              ),
-                            ],
-                          ),
+                        child: _HoverButton(
+                          onTap: () => _addToFavorites(hero),
+                          icon: Icons.star_border,
+                          label: "Favorite",
+                          normalBg: const Color(0x1F661FFF),
+                          hoverBg: const Color(0x33661FFF),
+                          normalIconColor: const Color(0xFF661FFF),
+                          hoverIconColor: Colors.white,
+                          normalTextColor: const Color(0xFF661FFF),
+                          hoverTextColor: Colors.white,
                         ),
                       ),
                     ],
@@ -162,47 +137,21 @@ class _SearchPageState extends State<SearchPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ), // Added padding
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0x1F661FFF,
-                            ), // Background color with 12% opacity
-                            borderRadius: BorderRadius.circular(
-                              6,
-                            ), // Increased border radius
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.info_outline,
-                                  color: Color(0xFF661FFF),
-                                ),
-                                iconSize: 20,
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                onPressed: () {
-                                  // Add functionality for "More Info" button
-                                  debugPrint(
-                                    "More Info clicked for ${hero['name']}",
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                "More Info",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Color(0xFF661FFF),
-                                ), // Text color with 100% opacity
-                              ),
-                            ],
-                          ),
+                        child: _HoverButton(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => HeroInfo(hero: hero),
+                            );
+                          },
+                          icon: Icons.info_outline,
+                          label: "More Info",
+                          normalBg: const Color(0x1F661FFF),
+                          hoverBg: const Color(0x33661FFF),
+                          normalIconColor: const Color(0xFF661FFF),
+                          hoverIconColor: Colors.white,
+                          normalTextColor: const Color(0xFF661FFF),
+                          hoverTextColor: Colors.white,
                         ),
                       ),
                     ],
@@ -285,6 +234,77 @@ class _SearchPageState extends State<SearchPage> {
                         ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HoverButton extends StatefulWidget {
+  final VoidCallback onTap;
+  final IconData icon;
+  final String label;
+  final Color normalBg;
+  final Color hoverBg;
+  final Color normalIconColor;
+  final Color hoverIconColor;
+  final Color normalTextColor;
+  final Color hoverTextColor;
+
+  const _HoverButton({
+    required this.onTap,
+    required this.icon,
+    required this.label,
+    required this.normalBg,
+    required this.hoverBg,
+    required this.normalIconColor,
+    required this.hoverIconColor,
+    required this.normalTextColor,
+    required this.hoverTextColor,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_HoverButton> createState() => _HoverButtonState();
+}
+
+class _HoverButtonState extends State<_HoverButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: widget.onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          decoration: BoxDecoration(
+            color: _hovered ? widget.hoverBg : widget.normalBg,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                widget.icon,
+                color:
+                    _hovered ? widget.hoverIconColor : widget.normalIconColor,
+                size: 20,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color:
+                      _hovered ? widget.hoverTextColor : widget.normalTextColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
