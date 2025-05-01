@@ -78,9 +78,7 @@ class _SearchPageMobileState extends State<SearchPageMobile> {
   Widget _buildHeroCard(Map<String, dynamic> hero) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -92,8 +90,8 @@ class _SearchPageMobileState extends State<SearchPageMobile> {
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    const Icon(Icons.broken_image, size: 40),
+                errorBuilder:
+                    (_, __, ___) => const Icon(Icons.broken_image, size: 40),
               ),
             ),
             const SizedBox(width: 16),
