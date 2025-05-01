@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../database_helper.dart';
-import '../navigation_drawer.dart' as appnav;
-import '../widgets/hero_info.dart'; // <-- Add this import
+import '../../database_helper.dart';
+import '../../navigation_drawer.dart' as appnav;
+import '../../widgets/hero_info.dart'; // <-- Add this import
 
 class FavoritePageMobile extends StatefulWidget {
   final String apiKey;
