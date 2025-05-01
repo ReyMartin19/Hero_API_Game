@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
-import 'navigation_drawer.dart' as appnav;
-import 'hero_info.dart'; // <-- Add this import
+import '../database_helper.dart';
+import '../navigation_drawer.dart' as appnav;
+import '../widgets/hero_info.dart'; // <-- Add this import
 
 class FavoritePageMobile extends StatefulWidget {
   final String apiKey;
@@ -34,7 +34,9 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
       if (heroId == 0) throw Exception("Invalid hero ID");
       await DatabaseHelper.instance.removeFavoriteHero(heroId);
       setState(() {
-        _favorites.removeWhere((hero) => hero['id'].toString() == heroId.toString());
+        _favorites.removeWhere(
+          (hero) => hero['id'].toString() == heroId.toString(),
+        );
       });
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
@@ -42,9 +44,9 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
       );
     } catch (e) {
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.toString()}")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
       _loadFavorites();
     }
   }
@@ -52,9 +54,7 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
   Widget _buildHeroCard(Map<String, dynamic> hero) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -66,8 +66,8 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    const Icon(Icons.broken_image, size: 40),
+                errorBuilder:
+                    (_, __, ___) => const Icon(Icons.broken_image, size: 40),
               ),
             ),
             const SizedBox(width: 16),
@@ -102,11 +102,7 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
-                                Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                  size: 20,
-                                ),
+                                Icon(Icons.delete, color: Colors.red, size: 20),
                                 SizedBox(width: 4),
                                 Text(
                                   "Delete",
@@ -186,19 +182,20 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: _favorites.isEmpty
-            ? const Center(
-                child: Text(
-                  "No favorite heroes yet.",
-                  style: TextStyle(color: Colors.white),
+        child:
+            _favorites.isEmpty
+                ? const Center(
+                  child: Text(
+                    "No favorite heroes yet.",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+                : ListView.builder(
+                  itemCount: _favorites.length,
+                  itemBuilder: (context, index) {
+                    return _buildHeroCard(_favorites[index]);
+                  },
                 ),
-              )
-            : ListView.builder(
-                itemCount: _favorites.length,
-                itemBuilder: (context, index) {
-                  return _buildHeroCard(_favorites[index]);
-                },
-              ),
       ),
     );
   }

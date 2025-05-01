@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 
 class AboutPage extends StatelessWidget {
   final String apiKey;

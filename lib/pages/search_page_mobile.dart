@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'database_helper.dart';
-import 'navigation_drawer.dart' as appnav;
+import '../database_helper.dart';
+import '../navigation_drawer.dart' as appnav;
 
 class SearchPageMobile extends StatefulWidget {
   final String apiKey;

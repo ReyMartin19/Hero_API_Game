@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'database_helper.dart'; // Add this import
-import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import '../database_helper.dart'; // Add this import
+import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'hero_info.dart'; // <-- Add this import
+import '../widgets/hero_info.dart'; // <-- Add this import
 
 class SearchPage extends StatefulWidget {
   final String apiKey;

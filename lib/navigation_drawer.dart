@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'battle_page.dart';
-import 'search_page.dart';
-import 'favorite_page.dart';
-import 'about_page.dart';
+import 'pages/home_page.dart';
+import 'pages/battle_page.dart';
+import 'pages/search_page.dart';
+import 'pages/favorite_page.dart';
+import 'pages/about_page.dart';
 
 enum AppPage { home, battle, search, favorites, about }
 

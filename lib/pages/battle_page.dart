@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'database_helper.dart';
-import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
-import 'user_deck_widget.dart';
-import 'bot_deck_widget.dart';
+import '../database_helper.dart';
+import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import '../widgets/user_deck_widget.dart';
+import '../widgets/bot_deck_widget.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'result_card_container.dart';
-import 'end_match_dialog.dart'; // <-- Add this import
+import '../widgets/result_card_container.dart';
+import '../widgets/end_match_dialog.dart'; // <-- Add this import
 
 class BattlePage extends StatefulWidget {
   final String apiKey;

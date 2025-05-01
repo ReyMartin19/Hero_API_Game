@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
-import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import '../database_helper.dart';
+import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import 'favorite_page_mobile.dart'; // <-- Add this import
-import 'hero_info.dart'; // <-- Add this import
+import '../widgets/hero_info.dart'; // <-- Add this import
 
 class FavoritePage extends StatefulWidget {
   final String apiKey;

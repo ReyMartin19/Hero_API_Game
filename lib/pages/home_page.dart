@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
-import 'navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
+import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import 'home_page_mobile.dart'; // Import mobile layout
 
 class HomePage extends StatefulWidget {
