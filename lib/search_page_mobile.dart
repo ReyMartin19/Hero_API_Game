@@ -61,6 +61,7 @@ class _SearchPageMobileState extends State<SearchPageMobile> {
     );
 
     if (isAlreadyFavorite) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("${hero['name']} is already in favorites!")),
       );
@@ -68,6 +69,7 @@ class _SearchPageMobileState extends State<SearchPageMobile> {
     }
 
     await DatabaseHelper.instance.addFavoriteHero(hero);
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("${hero['name']} added to favorites!")),
     );

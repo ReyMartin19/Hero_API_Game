@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         // Proceed to Home Page
         if (context.mounted) {
           Navigator.pushReplacement(
+            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(builder: (context) => HomePage(apiKey: apiKey)),
           );

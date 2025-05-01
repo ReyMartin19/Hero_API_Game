@@ -134,6 +134,7 @@ class _BattlePageState extends State<BattlePage> {
       setState(() => isLoadingDeck = false);
 
       if (context.mounted) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Failed to load decks. Please try again."),
@@ -249,10 +250,13 @@ class _BattlePageState extends State<BattlePage> {
       builder: (context) {
         bool dialogOpen = true;
         Future.delayed(const Duration(seconds: 5), () {
+          // ignore: use_build_context_synchronously
           if (dialogOpen && Navigator.of(context).canPop()) {
+            // ignore: use_build_context_synchronously
             Navigator.of(context).pop();
           }
         });
+        // ignore: deprecated_member_use
         return WillPopScope(
           onWillPop: () async {
             dialogOpen = false;
@@ -470,9 +474,10 @@ class _BattlePageState extends State<BattlePage> {
             int.tryParse(selectedUserCard!['powerstats'][stat] ?? '0') ?? 0;
         final botStat =
             int.tryParse(selectedBotCard!['powerstats'][stat] ?? '0') ?? 0;
-        if (userStat > botStat)
+        if (userStat > botStat) {
           userPoints++;
-        else if (botStat > userStat)
+        } else if (botStat > userStat)
+          // ignore: curly_braces_in_flow_control_structures
           botPoints++;
       }
       return userPoints <= botPoints;
@@ -495,46 +500,15 @@ class _BattlePageState extends State<BattlePage> {
             int.tryParse(selectedUserCard!['powerstats'][stat] ?? '0') ?? 0;
         final botStat =
             int.tryParse(selectedBotCard!['powerstats'][stat] ?? '0') ?? 0;
-        if (userStat > botStat)
+        if (userStat > botStat) {
           userPoints++;
-        else if (botStat > userStat)
+        } else if (botStat > userStat)
+          // ignore: curly_braces_in_flow_control_structures
           botPoints++;
       }
       return userPoints >= botPoints;
     }
     return false;
-  }
-
-  Widget _buildEndScreen() {
-    return Center(
-      // Wrap the entire column with Center
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            battleResult ?? "Game Over",
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          if (userDeck.isEmpty || botDeck.isEmpty) ...[
-            Text(
-              userDeck.isEmpty ? "The Winner is Bot!" : "The Winner is You!",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-          ],
-          Text("Your Score: $userScore", style: const TextStyle(fontSize: 18)),
-          Text("Bot's Score: $botScore", style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 30),
-          ElevatedButton(onPressed: _restartGame, child: const Text("Restart")),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: _generateDeck,
-            child: const Text("Distribute Cards Again"),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildDiceSpinner() {
@@ -588,8 +562,6 @@ class _BattlePageState extends State<BattlePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showResult = true; // Always show result card container
-
     return Scaffold(
       appBar: AppBar(title: const Text("Battle Page")),
       drawer: appnav.NavigationDrawer(
@@ -663,17 +635,6 @@ class _BattlePageState extends State<BattlePage> {
         ],
       ),
     );
-  }
-}
-
-class _NoScrollbarBehavior extends ScrollBehavior {
-  @override
-  Widget buildViewportChrome(
-    BuildContext context,
-    Widget child,
-    AxisDirection axisDirection,
-  ) {
-    return child;
   }
 }
 

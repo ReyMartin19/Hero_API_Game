@@ -75,6 +75,7 @@ class UserDeckWidget extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
                                       BoxShadow(
+                                        // ignore: deprecated_member_use
                                         color: Colors.grey.withOpacity(
                                           isHovered ? 0.8 : 0.5,
                                         ),

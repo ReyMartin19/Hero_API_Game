@@ -36,10 +36,12 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
       setState(() {
         _favorites.removeWhere((hero) => hero['id'].toString() == heroId.toString());
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Hero removed successfully!")),
       );
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: ${e.toString()}")),
       );

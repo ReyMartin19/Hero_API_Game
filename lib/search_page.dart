@@ -64,6 +64,7 @@ class _SearchPageState extends State<SearchPage> {
     ); // Compare by hero ID
 
     if (isAlreadyFavorite) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("${hero['name']} is already in favorites!")),
       );
@@ -72,6 +73,7 @@ class _SearchPageState extends State<SearchPage> {
 
     // Add the hero to favorites if not already added
     await DatabaseHelper.instance.addFavoriteHero(hero);
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("${hero['name']} added to favorites!")),
     );
@@ -251,6 +253,7 @@ class _HoverButton extends StatefulWidget {
   final Color normalTextColor;
   final Color hoverTextColor;
 
+  // ignore: use_super_parameters
   const _HoverButton({
     required this.onTap,
     required this.icon,

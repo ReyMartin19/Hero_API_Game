@@ -64,10 +64,6 @@ class ResultCardContainer extends StatelessWidget {
     final double statRowMargin = 4;
     final double statFontSize = isSmallScreen ? 15 : 15;
     final double statLabelFontSize = isSmallScreen ? 14 : 14;
-    final Color statLabelBg =
-        isSmallScreen
-            ? const Color.fromARGB(180, 57, 164, 251)
-            : const Color.fromARGB(202, 57, 164, 251);
 
     Widget userImage =
         selectedUserCard != null
@@ -124,7 +120,7 @@ class ResultCardContainer extends StatelessWidget {
             );
 
     // Helper to get name or placeholder
-    String _getCardName(Map<String, dynamic>? card, {bool isBot = false}) {
+    String getCardName(Map<String, dynamic>? card, {bool isBot = false}) {
       if (card != null &&
           card['name'] != null &&
           card['name'].toString().trim().isNotEmpty) {
@@ -247,6 +243,7 @@ class ResultCardContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.grey.withOpacity(0.3),
               spreadRadius: 2,
               blurRadius: 8,
@@ -271,7 +268,7 @@ class ResultCardContainer extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       child: Text(
-                        _getCardName(selectedUserCard),
+                        getCardName(selectedUserCard),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
@@ -302,7 +299,7 @@ class ResultCardContainer extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       child: Text(
-                        _getCardName(selectedBotCard, isBot: true),
+                        getCardName(selectedBotCard, isBot: true),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,

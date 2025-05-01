@@ -56,6 +56,7 @@ class _FavoritePageState extends State<FavoritePage> {
       debugPrint('Database now contains ${updatedFavorites.length} favorites');
 
       if (updatedFavorites.length == _favorites.length) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Hero removed successfully!")),
         );
@@ -67,31 +68,12 @@ class _FavoritePageState extends State<FavoritePage> {
     } catch (e) {
       debugPrint("Deletion error: $e");
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
       // Reload from database on error
       _loadFavorites();
     }
-  }
-
-  Widget _buildStatRow(String label, dynamic value) {
-    final int statValue = int.tryParse(value ?? '0') ?? 0;
-    return Row(
-      children: [
-        SizedBox(
-          width: 90,
-          child: Text(label, style: const TextStyle(fontSize: 14)),
-        ),
-        SizedBox(
-          width: 40,
-          child: Text(
-            "${value ?? 'N/A'}",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            textAlign: TextAlign.right,
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildHeroCard(Map<String, dynamic> hero) {
@@ -229,6 +211,7 @@ class _HoverButton extends StatefulWidget {
   final Color normalTextColor;
   final Color hoverTextColor;
 
+  // ignore: use_super_parameters
   const _HoverButton({
     required this.onTap,
     required this.icon,
