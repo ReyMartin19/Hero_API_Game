@@ -448,7 +448,9 @@ class _BattlePageState extends State<BattlePage> {
           isDiceSpinning
               ? _buildDiceSpinner() // Show the dice spinner if spinning
               : Padding(
-                padding: const EdgeInsets.all(16),
+                padding:
+                    EdgeInsets
+                        .zero, // Remove vertical and horizontal padding here
                 child:
                     isLoadingDeck
                         ? Center(
@@ -464,19 +466,24 @@ class _BattlePageState extends State<BattlePage> {
                         ? ScrollConfiguration(
                           behavior: _NoScrollbarBehavior(),
                           child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                UserDeckWidget(
-                                  deck: userDeck,
-                                  score: userScore,
-                                  decksReady: decksReady,
-                                  onCardTap: _startBattle,
-                                ),
-                                const SizedBox(height: 20),
-                                _buildResultContainer(),
-                                const SizedBox(height: 20),
-                                BotDeckWidget(deck: botDeck, score: botScore),
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ), // Add only horizontal padding here
+                              child: Column(
+                                children: [
+                                  UserDeckWidget(
+                                    deck: userDeck,
+                                    score: userScore,
+                                    decksReady: decksReady,
+                                    onCardTap: _startBattle,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  _buildResultContainer(),
+                                  const SizedBox(height: 20),
+                                  BotDeckWidget(deck: botDeck, score: botScore),
+                                ],
+                              ),
                             ),
                           ),
                         )

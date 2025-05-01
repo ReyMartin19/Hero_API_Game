@@ -34,6 +34,8 @@ class ResultCardContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     int parseStat(dynamic value) => int.tryParse(value?.toString() ?? '0') ?? 0;
 
+    final isSmallScreen = MediaQuery.of(context).size.width < 400;
+
     final statLabels = [
       "Intelligence",
       "Strength",
@@ -52,10 +54,16 @@ class ResultCardContainer extends StatelessWidget {
     ];
 
     // Set a fixed width for stats and labels for alignment
-    const double statNumberWidth = 40;
-    const double statLabelWidth = 110;
-    const double statRowHeight = 32;
-    const double statRowMargin = 4;
+    final double statNumberWidth = isSmallScreen ? 28 : 40;
+    final double statLabelWidth = isSmallScreen ? 70 : 110;
+    final double statRowHeight = isSmallScreen ? 22 : 32;
+    final double statRowMargin = 4;
+    final double statFontSize = isSmallScreen ? 15 : 15;
+    final double statLabelFontSize = isSmallScreen ? 14 : 14;
+    final Color statLabelBg =
+        isSmallScreen
+            ? const Color.fromARGB(180, 57, 164, 251)
+            : const Color.fromARGB(202, 57, 164, 251);
 
     Widget userImage =
         selectedUserCard != null
@@ -63,23 +71,23 @@ class ResultCardContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 selectedUserCard!['image']['url'],
-                width: 90,
-                height: 180, // Increased height
+                width: 50,
+                height: 50, // Increased height
                 fit: BoxFit.cover,
                 errorBuilder:
                     (_, __, ___) => const Icon(Icons.broken_image, size: 60),
               ),
             )
             : Container(
-              width: 90,
-              height: 160, // Increased height
+              width: 50,
+              height: 50, // Increased height
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.person_outline,
-                size: 60,
+                size: 30,
                 color: Colors.grey,
               ),
             );
@@ -90,23 +98,23 @@ class ResultCardContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 selectedBotCard!['image']['url'],
-                width: 90,
-                height: 180, // Increased height
+                width: 50,
+                height: 50, // Increased height
                 fit: BoxFit.cover,
                 errorBuilder:
                     (_, __, ___) => const Icon(Icons.broken_image, size: 60),
               ),
             )
             : Container(
-              width: 90,
-              height: 160, // Increased height
+              width: 50,
+              height: 50, // Increased height
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.smart_toy_outlined,
-                size: 60,
+                size: 30,
                 color: Colors.grey,
               ),
             );
@@ -127,7 +135,7 @@ class ResultCardContainer extends StatelessWidget {
         for (final key in statKeys)
           Container(
             height: statRowHeight,
-            margin: const EdgeInsets.symmetric(vertical: statRowMargin / 2),
+            margin: EdgeInsets.symmetric(vertical: statRowMargin / 2),
             child: Align(
               alignment: Alignment.centerRight,
               child: SizedBox(
@@ -139,6 +147,7 @@ class ResultCardContainer extends StatelessWidget {
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: statFontSize,
                     color:
                         selectedUserCard != null && selectedBotCard != null
                             ? (parseStat(selectedUserCard!['powerstats'][key]) >
@@ -162,7 +171,7 @@ class ResultCardContainer extends StatelessWidget {
         for (final key in statKeys)
           Container(
             height: statRowHeight,
-            margin: const EdgeInsets.symmetric(vertical: statRowMargin / 2),
+            margin: EdgeInsets.symmetric(vertical: statRowMargin / 2),
             child: Align(
               alignment: Alignment.centerLeft,
               child: SizedBox(
@@ -174,6 +183,7 @@ class ResultCardContainer extends StatelessWidget {
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: statFontSize,
                     color:
                         selectedUserCard != null && selectedBotCard != null
                             ? (parseStat(selectedBotCard!['powerstats'][key]) >
@@ -197,22 +207,26 @@ class ResultCardContainer extends StatelessWidget {
         for (final label in statLabels)
           Container(
             height: statRowHeight,
-            margin: const EdgeInsets.symmetric(vertical: statRowMargin / 2),
+            margin: EdgeInsets.symmetric(vertical: statRowMargin / 2),
             child: Align(
               alignment: Alignment.center,
               child: Container(
                 width: statLabelWidth,
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 2 : 3,
+                  vertical: isSmallScreen ? 1 : 2,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(202, 57, 164, 251),
-                  borderRadius: BorderRadius.circular(6),
+                  color: statLabelBg,
+                  borderRadius: BorderRadius.circular(isSmallScreen ? 4 : 6),
                 ),
                 child: Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.normal,
                     color: Colors.white,
+                    fontSize: statLabelFontSize,
                   ),
                 ),
               ),
@@ -223,7 +237,7 @@ class ResultCardContainer extends StatelessWidget {
 
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -247,7 +261,7 @@ class ResultCardContainer extends StatelessWidget {
                 // User image and name
                 Column(
                   children: [
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     userImage,
                     const SizedBox(height: 8),
                     SizedBox(
@@ -265,16 +279,16 @@ class ResultCardContainer extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 2),
                 // User stats or placeholder (fixed width)
                 userStats,
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
                 // Stat labels with blue background (fixed width)
                 statLabelColumn,
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
                 // Bot stats or placeholder (fixed width)
                 botStats,
-                const SizedBox(width: 8),
+                const SizedBox(width: 2),
                 // Bot image and name
                 Column(
                   children: [

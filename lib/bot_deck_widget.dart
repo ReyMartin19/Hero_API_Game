@@ -9,6 +9,7 @@ class BotDeckWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
+    final bool isMobile = MediaQuery.of(context).size.width < 700;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -33,12 +34,15 @@ class BotDeckWidget extends StatelessWidget {
                   controller: scrollController,
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.zero,
-                  itemCount: deck.length,
+                  itemCount: isMobile ? (deck.isNotEmpty ? 1 : 0) : deck.length,
                   separatorBuilder: (_, __) => const SizedBox(width: 10),
                   itemBuilder: (context, index) {
                     final hero = deck[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 23,
+                      ),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         decoration: BoxDecoration(
@@ -66,9 +70,7 @@ class BotDeckWidget extends StatelessWidget {
                               children: [
                                 const Text(
                                   "???",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
                                 _BotStatRow(label: "Intelligence"),
@@ -87,45 +89,47 @@ class BotDeckWidget extends StatelessWidget {
                 ),
               ),
               // Left arrow
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_left),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      scrollController.animateTo(
-                        scrollController.offset - 200,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
+              if (MediaQuery.of(context).size.width >= 700)
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_left),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        scrollController.animateTo(
+                          scrollController.offset - 200,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
               // Right arrow
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_right),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      scrollController.animateTo(
-                        scrollController.offset + 200,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
+              if (MediaQuery.of(context).size.width >= 700)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_right),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        scrollController.animateTo(
+                          scrollController.offset + 200,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ],
@@ -144,10 +148,7 @@ class _BotStatRow extends StatelessWidget {
       children: [
         SizedBox(
           width: 90,
-          child: Text(
-            "$label:",
-            style: const TextStyle(fontSize: 14),
-          ),
+          child: Text("$label:", style: const TextStyle(fontSize: 14)),
         ),
         const SizedBox(
           width: 40,

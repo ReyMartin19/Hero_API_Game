@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class HeroInfo extends StatelessWidget {
   final Map<String, dynamic> hero;
-
   const HeroInfo({super.key, required this.hero});
 
   @override
@@ -12,6 +11,8 @@ class HeroInfo extends StatelessWidget {
     final appearance = hero['appearance'] ?? {};
     final work = hero['work'] ?? {};
     final connections = hero['connections'] ?? {};
+
+    final isWide = MediaQuery.of(context).size.width > 800;
 
     return Scaffold(
       appBar: AppBar(
@@ -24,61 +25,172 @@ class HeroInfo extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 1,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  hero['image']?['url'] ?? '',
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      const Icon(Icons.broken_image, size: 80),
+      body: Container(
+        color: const Color(0xFFF5F6FA),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: isWide
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Left column: image, name, powerstats
+                    SizedBox(
+                      width: 340,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image.network(
+                                hero['image']?['url'] ?? '',
+                                width: 300,
+                                height: 300,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    const Icon(Icons.broken_image, size: 80),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Center(
+                            child: Text(
+                              hero['name'] ?? 'Unknown',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF661FFF),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          _SectionCard(
+                            title: "Powerstats",
+                            child: _PowerStatsList(stats: powerstats),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 32),
+                    // Right column: biography, appearance, work, connections
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionCard(
+                            title: "Biography",
+                            child: _InfoList(data: biography),
+                          ),
+                          const SizedBox(height: 18),
+                          _SectionCard(
+                            title: "Appearance",
+                            child: _InfoList(data: appearance),
+                          ),
+                          const SizedBox(height: 18),
+                          _SectionCard(
+                            title: "Work",
+                            child: _InfoList(data: work),
+                          ),
+                          const SizedBox(height: 18),
+                          _SectionCard(
+                            title: "Connections",
+                            child: _InfoList(data: connections),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Hero image
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: Image.network(
+                          hero['image']?['url'] ?? '',
+                          width: 180,
+                          height: 180,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 80),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    // Hero name
+                    Center(
+                      child: Text(
+                        hero['name'] ?? 'Unknown',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF661FFF),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Divider
+                    const Divider(height: 32, thickness: 1.2),
+                    // Powerstats section
+                    _SectionCard(
+                      title: "Powerstats",
+                      child: _PowerStatsList(stats: powerstats),
+                    ),
+                    const SizedBox(height: 18),
+                    _SectionCard(
+                      title: "Biography",
+                      child: _InfoList(data: biography),
+                    ),
+                    const SizedBox(height: 18),
+                    _SectionCard(
+                      title: "Appearance",
+                      child: _InfoList(data: appearance),
+                    ),
+                    const SizedBox(height: 18),
+                    _SectionCard(title: "Work", child: _InfoList(data: work)),
+                    const SizedBox(height: 18),
+                    _SectionCard(
+                      title: "Connections",
+                      child: _InfoList(data: connections),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Center(
-              child: Text(
-                hero['name'] ?? 'Unknown',
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            _SectionTitle("Powerstats"),
-            _StatList(stats: powerstats),
-            const SizedBox(height: 16),
-            _SectionTitle("Biography"),
-            _InfoList(data: biography),
-            const SizedBox(height: 16),
-            _SectionTitle("Appearance"),
-            _InfoList(data: appearance),
-            const SizedBox(height: 16),
-            _SectionTitle("Work"),
-            _InfoList(data: work),
-            const SizedBox(height: 16),
-            _SectionTitle("Connections"),
-            _InfoList(data: connections),
-            const SizedBox(height: 24),
-          ],
         ),
       ),
     );
   }
 }
 
+// Section card for visual grouping
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+  const _SectionCard({required this.title, required this.child});
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [_SectionTitle(title), const SizedBox(height: 8), child],
+        ),
+      ),
+    );
+  }
+}
+
+// Section title
 class _SectionTitle extends StatelessWidget {
   final String title;
   const _SectionTitle(this.title);
-
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -92,24 +204,44 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _StatList extends StatelessWidget {
+// Redesigned powerstats with icons and alignment
+class _PowerStatsList extends StatelessWidget {
   final Map stats;
-  const _StatList({required this.stats});
-
+  const _PowerStatsList({required this.stats});
+  static const _statIcons = {
+    "intelligence": "��",
+    "strength": "💪",
+    "speed": "⚡",
+    "durability": "🛡️",
+    "power": "🔥",
+    "combat": "⚔️",
+  };
   @override
   Widget build(BuildContext context) {
     if (stats.isEmpty) return const Text("No data.");
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: stats.entries.map<Widget>((entry) {
-        final label = entry.key.toString();
-        final value = entry.value?.toString() ?? 'N/A';
+      children: _statIcons.entries.map((entry) {
+        final label = entry.key[0].toUpperCase() + entry.key.substring(1);
+        final value = stats[entry.key]?.toString() ?? 'N/A';
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
             children: [
-              SizedBox(width: 120, child: Text(label[0].toUpperCase() + label.substring(1))),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(
+                width: 32,
+                child: Text(
+                  entry.value,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+              SizedBox(width: 110, child: Text(label)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
             ],
           ),
         );
@@ -118,10 +250,10 @@ class _StatList extends StatelessWidget {
   }
 }
 
+// ...existing _InfoList class...
 class _InfoList extends StatelessWidget {
   final Map data;
   const _InfoList({required this.data});
-
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) return const Text("No data.");

@@ -46,19 +46,27 @@ class UserDeckWidget extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final hero = deck[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 8,
+                      ),
                       child: StatefulBuilder(
                         builder: (context, setState) {
                           bool isHovered = hero['hover'] == true;
                           return MouseRegion(
-                            onEnter: (_) => setState(() => hero['hover'] = true),
-                            onExit: (_) => setState(() => hero['hover'] = false),
+                            onEnter:
+                                (_) => setState(() => hero['hover'] = true),
+                            onExit:
+                                (_) => setState(() => hero['hover'] = false),
                             child: GestureDetector(
                               onTap: decksReady ? () => onCardTap(hero) : null,
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
-                                  color: isHovered ? Colors.blue[50] : Colors.white,
+                                  color:
+                                      isHovered
+                                          ? Colors.blue[50]
+                                          : Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
                                     BoxShadow(
@@ -70,9 +78,13 @@ class UserDeckWidget extends StatelessWidget {
                                       offset: const Offset(0, 3),
                                     ),
                                   ],
-                                  border: isHovered
-                                      ? Border.all(color: Colors.blue, width: 2)
-                                      : null,
+                                  border:
+                                      isHovered
+                                          ? Border.all(
+                                            color: Colors.blue,
+                                            width: 2,
+                                          )
+                                          : null,
                                 ),
                                 padding: const EdgeInsets.all(8),
                                 child: Row(
@@ -85,15 +97,17 @@ class UserDeckWidget extends StatelessWidget {
                                         width: 160,
                                         height: 160,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => const Icon(
-                                          Icons.broken_image,
-                                          size: 100,
-                                        ),
+                                        errorBuilder:
+                                            (_, __, ___) => const Icon(
+                                              Icons.broken_image,
+                                              size: 100,
+                                            ),
                                       ),
                                     ),
                                     const SizedBox(width: 24),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           hero['name'],
@@ -102,12 +116,32 @@ class UserDeckWidget extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 4),
-                                        _StatRow(label: "Intelligence", value: hero['powerstats']['intelligence']),
-                                        _StatRow(label: "Strength", value: hero['powerstats']['strength']),
-                                        _StatRow(label: "Speed", value: hero['powerstats']['speed']),
-                                        _StatRow(label: "Durability", value: hero['powerstats']['durability']),
-                                        _StatRow(label: "Power", value: hero['powerstats']['power']),
-                                        _StatRow(label: "Combat", value: hero['powerstats']['combat']),
+                                        _StatRow(
+                                          label: "Intelligence",
+                                          value:
+                                              hero['powerstats']['intelligence'],
+                                        ),
+                                        _StatRow(
+                                          label: "Strength",
+                                          value: hero['powerstats']['strength'],
+                                        ),
+                                        _StatRow(
+                                          label: "Speed",
+                                          value: hero['powerstats']['speed'],
+                                        ),
+                                        _StatRow(
+                                          label: "Durability",
+                                          value:
+                                              hero['powerstats']['durability'],
+                                        ),
+                                        _StatRow(
+                                          label: "Power",
+                                          value: hero['powerstats']['power'],
+                                        ),
+                                        _StatRow(
+                                          label: "Combat",
+                                          value: hero['powerstats']['combat'],
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -122,45 +156,47 @@ class UserDeckWidget extends StatelessWidget {
                 ),
               ),
               // Left arrow
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_left),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      scrollController.animateTo(
-                        scrollController.offset - 200,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
+              if (MediaQuery.of(context).size.width >= 700)
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_left),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        scrollController.animateTo(
+                          scrollController.offset - 200,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
               // Right arrow
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_right),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      scrollController.animateTo(
-                        scrollController.offset + 200,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
+              if (MediaQuery.of(context).size.width >= 700)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_right),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        scrollController.animateTo(
+                          scrollController.offset + 200,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ],
@@ -180,10 +216,7 @@ class _StatRow extends StatelessWidget {
       children: [
         SizedBox(
           width: 90,
-          child: Text(
-            "$label:",
-            style: const TextStyle(fontSize: 14),
-          ),
+          child: Text("$label:", style: const TextStyle(fontSize: 14)),
         ),
         SizedBox(
           width: 40,
