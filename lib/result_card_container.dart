@@ -13,6 +13,8 @@ class ResultCardContainer extends StatelessWidget {
   final VoidCallback onRollDice;
   final Widget Function() buildDiceOrResult;
   final bool isInitial; // Add this flag to indicate initial state
+  final bool showRestart;
+  final VoidCallback? onRestart;
 
   const ResultCardContainer({
     super.key,
@@ -28,6 +30,8 @@ class ResultCardContainer extends StatelessWidget {
     required this.onRollDice,
     required this.buildDiceOrResult,
     this.isInitial = false,
+    this.showRestart = false,
+    this.onRestart,
   });
 
   @override
@@ -218,14 +222,14 @@ class ResultCardContainer extends StatelessWidget {
                   vertical: isSmallScreen ? 1 : 2,
                 ),
                 decoration: BoxDecoration(
-                  color: statLabelBg,
+                  color: const Color(0x1F661FFF), // #661FFF at 12% opacity
                   borderRadius: BorderRadius.circular(isSmallScreen ? 4 : 6),
                 ),
                 child: Text(
                   label,
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
-                    color: Colors.white,
+                    color: const Color(0xFF661FFF), // #661FFF at 100% opacity
                     fontSize: statLabelFontSize,
                   ),
                 ),
@@ -325,18 +329,23 @@ class ResultCardContainer extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                buildDiceOrResult(),
-                if (showDice && isUserTurn)
+                if (showRestart)
+                  ElevatedButton(
+                    onPressed: onRestart,
+                    child: const Text("Restart"),
+                  )
+                else if (showDice && isUserTurn)
                   ElevatedButton(
                     onPressed: onRollDice,
                     child: const Icon(Icons.casino),
-                  ),
-                if (showDice && !isUserTurn)
+                  )
+                else if (showDice && !isUserTurn)
                   const Text(
                     "Bot is spinning...",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
+                buildDiceOrResult(),
               ],
             ),
           ],

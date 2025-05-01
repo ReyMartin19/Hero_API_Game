@@ -8,6 +8,7 @@ import 'user_deck_widget.dart';
 import 'bot_deck_widget.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'result_card_container.dart';
+import 'end_match_dialog.dart'; // <-- Add this import
 
 class BattlePage extends StatefulWidget {
   final String apiKey;
@@ -37,6 +38,7 @@ class _BattlePageState extends State<BattlePage> {
   bool isUserTurn = false; // To track whose turn it is to spin the dice
   int diceResult = 0; // Result of the dice roll
   bool isDiceSpinning = false; // Add a flag to track dice spinning state
+  bool _showFightGif = false;
 
   @override
   void initState() {
@@ -80,6 +82,7 @@ class _BattlePageState extends State<BattlePage> {
     setState(() {
       isLoadingDeck = true;
       decksReady = false;
+      diceResult = 0; // <-- Reset diceResult when distributing cards
     });
 
     try {
@@ -238,6 +241,37 @@ class _BattlePageState extends State<BattlePage> {
     return additionalCards;
   }
 
+  // Remove the _showEndMatchDialog method and replace with showDialog using EndMatchDialog
+  void _showEndMatchDialog(String winnerText) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        bool dialogOpen = true;
+        Future.delayed(const Duration(seconds: 5), () {
+          if (dialogOpen && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+        return WillPopScope(
+          onWillPop: () async {
+            dialogOpen = false;
+            return true;
+          },
+          child: EndMatchDialog(
+            winnerText: winnerText,
+            userScore: userScore,
+            botScore: botScore,
+            onClose: () {
+              dialogOpen = false;
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _startBattle(Map<String, dynamic> userCard) async {
     if (isLoadingAdditionalCards) {
       // Alert the user to wait for additional cards to load
@@ -260,6 +294,15 @@ class _BattlePageState extends State<BattlePage> {
       );
       return;
     }
+
+    // Show fight GIF overlay
+    setState(() {
+      _showFightGif = true;
+    });
+    await Future.delayed(const Duration(seconds: 2)); // Show GIF for 2 seconds
+    setState(() {
+      _showFightGif = false;
+    });
 
     selectedUserCard = userCard;
     selectedBotCard =
@@ -325,20 +368,70 @@ class _BattlePageState extends State<BattlePage> {
 
     _saveGameState();
 
-    if (userDeck.isEmpty || botDeck.isEmpty) {
-      if (userDeck.isEmpty) {
-        battleResult = "Bot Wins the Game!";
-      } else if (botDeck.isEmpty) {
+    // --- FIX LOGIC FOR LAST CARD ---
+    // If both decks are empty, show end popup
+    if (userDeck.isEmpty && botDeck.isEmpty) {
+      String winnerText;
+      if (userScore > botScore) {
         battleResult = "You Win the Game!";
+        winnerText = "You Win the Match!";
+      } else if (botScore > userScore) {
+        battleResult = "Bot Wins the Game!";
+        winnerText = "Bot Wins the Match!";
+      } else {
+        battleResult = "It's a Draw!";
+        winnerText = "It's a Draw!";
       }
       decksReady = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showEndMatchDialog(winnerText);
+      });
+    }
+    // If user has no cards left after this round
+    else if (userDeck.isEmpty &&
+        selectedUserCard != null &&
+        selectedBotCard != null) {
+      // If user lost or draw, show restart and popup
+      if (userPoints <= botPoints) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showEndMatchDialog(
+            botPoints > userPoints ? "Bot Wins the Match!" : "It's a Draw!",
+          );
+        });
+      }
+      // If user won, DO NOT show restart, allow spin to continue (showDice remains true)
+      // No popup, game continues
+    }
+    // If bot has no cards left after this round
+    else if (botDeck.isEmpty &&
+        selectedUserCard != null &&
+        selectedBotCard != null) {
+      // If bot lost or draw, show restart and popup
+      if (userPoints >= botPoints) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showEndMatchDialog(
+            userPoints > botPoints ? "You Win the Match!" : "It's a Draw!",
+          );
+        });
+      }
+      // If bot won, DO NOT show restart, allow spin to continue (showDice remains true)
+      // No popup, game continues
     }
 
-    // Finally update UI
     setState(() {});
   }
 
   void _restartGame() async {
+    // Safely close any open dialogs before resetting state
+    // Only pop if a dialog is open, not the main route
+    try {
+      if (ModalRoute.of(context)?.isCurrent == false &&
+          Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      debugPrint("Error while popping dialog: $e");
+    }
     await DatabaseHelper.instance.clearMatchData(); // Clear match-related data
     bannedCardIds.clear(); // Clear the ban list when restarting the game
     setState(() {
@@ -352,7 +445,64 @@ class _BattlePageState extends State<BattlePage> {
       decksReady = false;
       showDice = false; // Reset dice visibility
       isUserTurn = false; // Reset turn tracking
+      diceResult = 0; // <-- Reset diceResult when restarting the game
     });
+  }
+
+  // Add this getter to determine if the game is over (no more cards to play)
+  bool get isGameOver {
+    if (userDeck.isEmpty && botDeck.isEmpty) return true;
+    if (userDeck.isEmpty &&
+        selectedUserCard != null &&
+        selectedBotCard != null) {
+      // Only game over if user lost or draw last round
+      int userPoints = 0, botPoints = 0;
+      final powerStats = [
+        'intelligence',
+        'strength',
+        'speed',
+        'durability',
+        'power',
+        'combat',
+      ];
+      for (final stat in powerStats) {
+        final userStat =
+            int.tryParse(selectedUserCard!['powerstats'][stat] ?? '0') ?? 0;
+        final botStat =
+            int.tryParse(selectedBotCard!['powerstats'][stat] ?? '0') ?? 0;
+        if (userStat > botStat)
+          userPoints++;
+        else if (botStat > userStat)
+          botPoints++;
+      }
+      return userPoints <= botPoints;
+    }
+    if (botDeck.isEmpty &&
+        selectedUserCard != null &&
+        selectedBotCard != null) {
+      // Only game over if bot lost or draw last round
+      int userPoints = 0, botPoints = 0;
+      final powerStats = [
+        'intelligence',
+        'strength',
+        'speed',
+        'durability',
+        'power',
+        'combat',
+      ];
+      for (final stat in powerStats) {
+        final userStat =
+            int.tryParse(selectedUserCard!['powerstats'][stat] ?? '0') ?? 0;
+        final botStat =
+            int.tryParse(selectedBotCard!['powerstats'][stat] ?? '0') ?? 0;
+        if (userStat > botStat)
+          userPoints++;
+        else if (botStat > userStat)
+          botPoints++;
+      }
+      return userPoints >= botPoints;
+    }
+    return false;
   }
 
   Widget _buildEndScreen() {
@@ -431,6 +581,8 @@ class _BattlePageState extends State<BattlePage> {
       onRollDice: _rollDice,
       buildDiceOrResult: _buildDiceOrResult,
       isInitial: selectedUserCard == null && selectedBotCard == null,
+      showRestart: isGameOver, // <-- pass this flag
+      onRestart: _restartGame, // <-- pass the restart callback
     );
   }
 
@@ -444,13 +596,12 @@ class _BattlePageState extends State<BattlePage> {
         currentPage: appnav.AppPage.battle,
         apiKey: widget.apiKey,
       ),
-      body:
+      body: Stack(
+        children: [
           isDiceSpinning
-              ? _buildDiceSpinner() // Show the dice spinner if spinning
+              ? _buildDiceSpinner()
               : Padding(
-                padding:
-                    EdgeInsets
-                        .zero, // Remove vertical and horizontal padding here
+                padding: EdgeInsets.zero,
                 child:
                     isLoadingDeck
                         ? Center(
@@ -459,17 +610,18 @@ class _BattlePageState extends State<BattlePage> {
                             size: 48,
                           ),
                         )
-                        : (userDeck.isEmpty || botDeck.isEmpty) &&
-                            battleResult != null
-                        ? _buildEndScreen()
-                        : decksReady
+                        : decksReady ||
+                            userDeck.isNotEmpty ||
+                            botDeck.isNotEmpty
                         ? ScrollConfiguration(
-                          behavior: _NoScrollbarBehavior(),
+                          behavior: ScrollConfiguration.of(
+                            context,
+                          ).copyWith(scrollbars: false),
                           child: SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
-                              ), // Add only horizontal padding here
+                              ),
                               child: Column(
                                 children: [
                                   UserDeckWidget(
@@ -494,93 +646,35 @@ class _BattlePageState extends State<BattlePage> {
                           ),
                         ),
               ),
-    );
-  }
-}
-
-class _ThreeDotsLoader extends StatefulWidget {
-  const _ThreeDotsLoader();
-
-  @override
-  State<_ThreeDotsLoader> createState() => _ThreeDotsLoaderState();
-}
-
-class _ThreeDotsLoaderState extends State<_ThreeDotsLoader>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _dotOne;
-  late Animation<double> _dotTwo;
-  late Animation<double> _dotThree;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat();
-    _dotOne = Tween<double>(begin: 0, end: 8).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeInOut),
+          // Fight GIF overlay
+          if (_showFightGif)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Center(
+                  child: Image.asset(
+                    'assets/fight.gif',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
-    );
-    _dotTwo = Tween<double>(begin: 0, end: 8).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeInOut),
-      ),
-    );
-    _dotThree = Tween<double>(begin: 0, end: 8).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.4, 1.0, curve: Curves.easeInOut),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Widget _buildDot(Animation<double> animation) {
-    return AnimatedBuilder(
-      animation: animation,
-      builder:
-          (context, child) => Padding(
-            padding: EdgeInsets.only(bottom: animation.value),
-            child: child,
-          ),
-      child: Container(
-        width: 16,
-        height: 16,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: const BoxDecoration(
-          color: Colors.blue,
-          shape: BoxShape.circle,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [_buildDot(_dotOne), _buildDot(_dotTwo), _buildDot(_dotThree)],
     );
   }
 }
 
 class _NoScrollbarBehavior extends ScrollBehavior {
   @override
-  Widget buildScrollbar(
+  Widget buildViewportChrome(
     BuildContext context,
     Widget child,
-    ScrollableDetails details,
+    AxisDirection axisDirection,
   ) {
-    return child; // disables the scrollbar
+    return child;
   }
 }
+
+// ...existing code...

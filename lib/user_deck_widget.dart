@@ -37,122 +37,123 @@ class UserDeckWidget extends StatelessWidget {
             children: [
               SizedBox(
                 height: 200,
-                child: ListView.separated(
-                  controller: scrollController,
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.zero,
-                  itemCount: deck.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  itemBuilder: (context, index) {
-                    final hero = deck[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 8,
-                      ),
-                      child: StatefulBuilder(
-                        builder: (context, setState) {
-                          bool isHovered = hero['hover'] == true;
-                          return MouseRegion(
-                            onEnter:
-                                (_) => setState(() => hero['hover'] = true),
-                            onExit:
-                                (_) => setState(() => hero['hover'] = false),
-                            child: GestureDetector(
-                              onTap: decksReady ? () => onCardTap(hero) : null,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                decoration: BoxDecoration(
-                                  color:
-                                      isHovered
-                                          ? Colors.blue[50]
-                                          : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(
-                                        isHovered ? 0.8 : 0.5,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    scrollbars: false, // Disable the horizontal scrollbar
+                  ),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.zero,
+                    itemCount: deck.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    itemBuilder: (context, index) {
+                      final hero = deck[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 8,
+                        ),
+                        child: StatefulBuilder(
+                          builder: (context, setState) {
+                            bool isHovered = hero['hover'] == true;
+                            return MouseRegion(
+                              onEnter:
+                                  (_) => setState(() => hero['hover'] = true),
+                              onExit:
+                                  (_) => setState(() => hero['hover'] = false),
+                              child: GestureDetector(
+                                onTap:
+                                    decksReady ? () => onCardTap(hero) : null,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isHovered
+                                            ? Colors.blue[50]
+                                            : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(
+                                          isHovered ? 0.8 : 0.5,
+                                        ),
+                                        spreadRadius: isHovered ? 4 : 2,
+                                        blurRadius: isHovered ? 10 : 5,
+                                        offset: const Offset(0, 3),
                                       ),
-                                      spreadRadius: isHovered ? 4 : 2,
-                                      blurRadius: isHovered ? 10 : 5,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                  border:
-                                      isHovered
-                                          ? Border.all(
-                                            color: Colors.blue,
-                                            width: 2,
-                                          )
-                                          : null,
-                                ),
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        hero['image']['url'],
-                                        width: 160,
-                                        height: 160,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (_, __, ___) => const Icon(
-                                              Icons.broken_image,
-                                              size: 100,
+                                    ],
+                                  ),
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          hero['image']['url'],
+                                          width: 160,
+                                          height: 160,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (_, __, ___) => const Icon(
+                                                Icons.broken_image,
+                                                size: 100,
+                                              ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            hero['name'],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 24),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          hero['name'],
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        _StatRow(
-                                          label: "Intelligence",
-                                          value:
-                                              hero['powerstats']['intelligence'],
-                                        ),
-                                        _StatRow(
-                                          label: "Strength",
-                                          value: hero['powerstats']['strength'],
-                                        ),
-                                        _StatRow(
-                                          label: "Speed",
-                                          value: hero['powerstats']['speed'],
-                                        ),
-                                        _StatRow(
-                                          label: "Durability",
-                                          value:
-                                              hero['powerstats']['durability'],
-                                        ),
-                                        _StatRow(
-                                          label: "Power",
-                                          value: hero['powerstats']['power'],
-                                        ),
-                                        _StatRow(
-                                          label: "Combat",
-                                          value: hero['powerstats']['combat'],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                          const SizedBox(height: 4),
+                                          _StatRow(
+                                            label: "INT",
+                                            value:
+                                                hero['powerstats']['intelligence'],
+                                          ),
+                                          _StatRow(
+                                            label: "STR",
+                                            value:
+                                                hero['powerstats']['strength'],
+                                          ),
+                                          _StatRow(
+                                            label: "SPD",
+                                            value: hero['powerstats']['speed'],
+                                          ),
+                                          _StatRow(
+                                            label: "DRB",
+                                            value:
+                                                hero['powerstats']['durability'],
+                                          ),
+                                          _StatRow(
+                                            label: "PWR",
+                                            value: hero['powerstats']['power'],
+                                          ),
+                                          _StatRow(
+                                            label: "CMB",
+                                            value: hero['powerstats']['combat'],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               // Left arrow
@@ -215,11 +216,11 @@ class _StatRow extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 90,
+          width: 38, // Reduced width for label
           child: Text("$label:", style: const TextStyle(fontSize: 14)),
         ),
         SizedBox(
-          width: 40,
+          width: 32, // Reduced width for value
           child: Text(
             "${value ?? 'N/A'}",
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),

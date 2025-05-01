@@ -38,11 +38,19 @@ class BotDeckWidget extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(width: 10),
                   itemBuilder: (context, index) {
                     final hero = deck[index];
+                    // Use different padding for mobile vs desktop
+                    final isMobileLayout = isMobile;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 23,
-                      ),
+                      padding:
+                          isMobileLayout
+                              ? const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 23,
+                              )
+                              : const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 8,
+                              ),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         decoration: BoxDecoration(
@@ -63,7 +71,21 @@ class BotDeckWidget extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.question_mark, size: 160),
+                            // Replace the Icon with the asset image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                'assets/logo.png',
+                                width: 160,
+                                height: 160,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => const Icon(
+                                      Icons.broken_image,
+                                      size: 100,
+                                    ),
+                              ),
+                            ),
                             const SizedBox(width: 24),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,12 +95,12 @@ class BotDeckWidget extends StatelessWidget {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
-                                _BotStatRow(label: "Intelligence"),
-                                _BotStatRow(label: "Strength"),
-                                _BotStatRow(label: "Speed"),
-                                _BotStatRow(label: "Durability"),
-                                _BotStatRow(label: "Power"),
-                                _BotStatRow(label: "Combat"),
+                                _BotStatRow(label: "INT"),
+                                _BotStatRow(label: "STR"),
+                                _BotStatRow(label: "SPD"),
+                                _BotStatRow(label: "DRB"),
+                                _BotStatRow(label: "PWR"),
+                                _BotStatRow(label: "CMB"),
                               ],
                             ),
                           ],
@@ -147,11 +169,11 @@ class _BotStatRow extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 90,
+          width: 38, // Reduced width for label
           child: Text("$label:", style: const TextStyle(fontSize: 14)),
         ),
         const SizedBox(
-          width: 40,
+          width: 32, // Reduced width for value
           child: Text(
             "???",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
