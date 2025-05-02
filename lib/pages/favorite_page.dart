@@ -3,6 +3,7 @@ import '../database_helper.dart';
 import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import 'mobile/favorite_page_mobile.dart'; // <-- Add this import
 import '../widgets/hero_info.dart'; // <-- Add this import
+import 'package:google_fonts/google_fonts.dart';
 
 class FavoritePage extends StatefulWidget {
   final String apiKey;
@@ -77,85 +78,88 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 
   Widget _buildHeroCard(Map<String, dynamic> hero) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                hero['image']['url'],
-                height: 150,
-                width: 150,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+    return _HoverGrow(
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  hero['image']['url'],
+                  height: 150,
+                  width: 150,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+                ),
               ),
-            ),
-            const SizedBox(width: 16), // Added spacing between image and text
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hero['name'],
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 16), // Added spacing between image and text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hero['name'],
+                      style: GoogleFonts.gruppo(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                        color: const Color(0xFF661FFF),
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ), // Spacing between name and buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _HoverButton(
-                          onTap: () => _removeFromFavorites(hero['id']),
-                          icon: Icons.delete,
-                          label: "Delete",
-                          normalBg: const Color(0x1F661FFF),
-                          hoverBg: const Color(0x33FF0000),
-                          normalIconColor: Colors.red,
-                          hoverIconColor: Colors.white,
-                          normalTextColor: Colors.red,
-                          hoverTextColor: Colors.white,
+                    const SizedBox(
+                      height: 30,
+                    ), // Spacing between name and buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HoverButton(
+                            onTap: () => _removeFromFavorites(hero['id']),
+                            icon: Icons.delete,
+                            label: "Delete",
+                            normalBg: const Color(0x1F661FFF),
+                            hoverBg: const Color(0x33FF0000),
+                            normalIconColor: Colors.red,
+                            hoverIconColor: Colors.white,
+                            normalTextColor: Colors.red,
+                            hoverTextColor: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _HoverButton(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => HeroInfo(hero: hero),
-                              ),
-                            );
-                          },
-                          icon: Icons.info_outline,
-                          label: "More Info",
-                          normalBg: const Color(0x1F661FFF),
-                          hoverBg: const Color(0x33661FFF),
-                          normalIconColor: const Color(0xFF661FFF),
-                          hoverIconColor: Colors.white,
-                          normalTextColor: const Color(0xFF661FFF),
-                          hoverTextColor: Colors.white,
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HoverButton(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => HeroInfo(hero: hero),
+                                ),
+                              );
+                            },
+                            icon: Icons.info_outline,
+                            label: "More Info",
+                            normalBg: const Color(0x1F661FFF),
+                            hoverBg: const Color(0x33661FFF),
+                            normalIconColor: const Color(0xFF661FFF),
+                            hoverIconColor: Colors.white,
+                            normalTextColor: const Color(0xFF661FFF),
+                            hoverTextColor: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -168,17 +172,22 @@ class _FavoritePageState extends State<FavoritePage> {
       return FavoritePageMobile(apiKey: widget.apiKey);
     }
     return Scaffold(
-      appBar: AppBar(title: const Text("Favorite Heroes")),
+      appBar: AppBar(
+        title: Text(
+          "Favorite Heroes",
+          style: GoogleFonts.gruppo(fontWeight: FontWeight.w900),
+        ),
+      ),
       drawer: appnav.NavigationDrawer(
         currentPage: appnav.AppPage.favorites,
         apiKey: widget.apiKey, // <-- use widget.apiKey here
       ),
       body:
           _favorites.isEmpty
-              ? const Center(
+              ? Center(
                 child: Text(
                   "No favorite heroes yet.",
-                  style: TextStyle(color: Colors.white),
+                  style: GoogleFonts.gruppo(fontWeight: FontWeight.w900),
                 ),
               )
               : Padding(
@@ -267,6 +276,32 @@ class _HoverButtonState extends State<_HoverButton> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _HoverGrow extends StatefulWidget {
+  final Widget child;
+  const _HoverGrow({required this.child});
+
+  @override
+  State<_HoverGrow> createState() => _HoverGrowState();
+}
+
+class _HoverGrowState extends State<_HoverGrow> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedScale(
+        scale: _hovered ? 1.04 : 1.0,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        child: widget.child,
       ),
     );
   }

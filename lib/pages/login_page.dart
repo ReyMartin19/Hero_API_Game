@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../database_helper.dart';
 import 'home_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -75,26 +76,34 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       "Yo-Gi-Oh",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.gruppo(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: 1.2,
                       ),
                     ),
                     const SizedBox(height: 8),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       "Battle with legendary heroes, collect cards, and become the ultimate champion in Yo-Gi-Oh Hero Game!",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, color: Colors.black54),
+                      style: GoogleFonts.lexend(
+                        fontSize: 16,
+                        color: const Color.fromARGB(137, 0, 0, 0),
+                        fontWeight: FontWeight.w300,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     TextField(
                       controller: _apiKeyController,
+                      style: GoogleFonts.gruppo(),
                       decoration: InputDecoration(
                         labelText: "Enter Hero API Key",
+                        labelStyle: GoogleFonts.gruppo(
+                          fontWeight: FontWeight.w900,
+                        ),
                         errorText: _errorText,
                         border: const OutlineInputBorder(),
                       ),
@@ -102,10 +111,21 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _isLoading ? null : _validateApiKey,
+                      style: ElevatedButton.styleFrom(
+                        textStyle: GoogleFonts.gruppo(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                        ),
+                      ),
                       child:
                           _isLoading
                               ? const CircularProgressIndicator()
-                              : const Text("Login"),
+                              : Text(
+                                "Login",
+                                style: GoogleFonts.gruppo(
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                     ),
                   ],
                 ),

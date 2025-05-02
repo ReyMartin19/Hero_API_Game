@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../navigation_drawer.dart' as appnav; // <-- Add this import
 
 class HomePageMobile extends StatelessWidget {
@@ -22,10 +23,14 @@ class HomePageMobile extends StatelessWidget {
         currentPage: appnav.AppPage.home,
         apiKey: apiKey,
       ),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : heroData == null
+      body: isLoading
+          ? Center(
+              child: LoadingAnimationWidget.fourRotatingDots(
+                color: Colors.blue,
+                size: 48,
+              ),
+            )
+          : heroData == null
               ? const Center(child: Text("Failed to load hero."))
               : Padding(
                 padding: const EdgeInsets.all(16.0),

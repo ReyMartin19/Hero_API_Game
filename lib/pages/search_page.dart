@@ -5,6 +5,7 @@ import '../database_helper.dart'; // Add this import
 import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../widgets/hero_info.dart'; // <-- Add this import
+import 'package:google_fonts/google_fonts.dart'; // <-- Add this import
 
 class SearchPage extends StatefulWidget {
   final String apiKey;
@@ -80,88 +81,93 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildHeroCard(Map<String, dynamic> hero) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ), // Increased border radius
-      child: Padding(
-        padding: const EdgeInsets.all(16.0), // Added padding around the card
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                12,
-              ), // Adjusted border radius for the image
-              child: Image.network(
-                hero['image']['url'],
-                height: 150,
-                width: 150,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+    return _HoverGrow(
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ), // Increased border radius
+        child: Padding(
+          padding: const EdgeInsets.all(16.0), // Added padding around the card
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  12,
+                ), // Adjusted border radius for the image
+                child: Image.network(
+                  hero['image']['url'],
+                  height: 150,
+                  width: 150,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+                ),
               ),
-            ),
-            const SizedBox(width: 16), // Added spacing between image and text
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hero['name'],
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 16), // Added spacing between image and text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hero['name'],
+                      style: GoogleFonts.gruppo(
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF661FFF),
+                        ),
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ), // Added spacing between name and buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _HoverButton(
-                          onTap: () => _addToFavorites(hero),
-                          icon: Icons.star_border,
-                          label: "Favorite",
-                          normalBg: const Color(0x1F661FFF),
-                          hoverBg: const Color(0x33661FFF),
-                          normalIconColor: const Color(0xFF661FFF),
-                          hoverIconColor: Colors.white,
-                          normalTextColor: const Color(0xFF661FFF),
-                          hoverTextColor: Colors.white,
+                    const SizedBox(
+                      height: 30,
+                    ), // Added spacing between name and buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HoverButton(
+                            onTap: () => _addToFavorites(hero),
+                            icon: Icons.star_border,
+                            label: "Favorite",
+                            normalBg: const Color(0x1F661FFF),
+                            hoverBg: const Color(0x33661FFF),
+                            normalIconColor: const Color(0xFF661FFF),
+                            hoverIconColor: Colors.white,
+                            normalTextColor: const Color(0xFF661FFF),
+                            hoverTextColor: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _HoverButton(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => HeroInfo(hero: hero),
-                            );
-                          },
-                          icon: Icons.info_outline,
-                          label: "More Info",
-                          normalBg: const Color(0x1F661FFF),
-                          hoverBg: const Color(0x33661FFF),
-                          normalIconColor: const Color(0xFF661FFF),
-                          hoverIconColor: Colors.white,
-                          normalTextColor: const Color(0xFF661FFF),
-                          hoverTextColor: Colors.white,
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HoverButton(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => HeroInfo(hero: hero),
+                              );
+                            },
+                            icon: Icons.info_outline,
+                            label: "More Info",
+                            normalBg: const Color(0x1F661FFF),
+                            hoverBg: const Color(0x33661FFF),
+                            normalIconColor: const Color(0xFF661FFF),
+                            hoverIconColor: Colors.white,
+                            normalTextColor: const Color(0xFF661FFF),
+                            hoverTextColor: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -171,7 +177,14 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
     return Scaffold(
-      appBar: AppBar(title: const Text("Search Heroes")),
+      appBar: AppBar(
+        title: Text(
+          "Search Heroes",
+          style: GoogleFonts.gruppo(
+            fontWeight: FontWeight.w900,
+          ), // <-- Apply Gruppo font to AppBar title
+        ),
+      ),
       drawer: appnav.NavigationDrawer(
         currentPage: appnav.AppPage.search,
         apiKey: widget.apiKey,
@@ -184,8 +197,12 @@ class _SearchPageState extends State<SearchPage> {
               constraints: const BoxConstraints(maxWidth: 800), // Set max width
               child: TextField(
                 controller: _searchController,
+                style: GoogleFonts.gruppo(), // <-- Apply Gruppo font to input
                 decoration: InputDecoration(
                   labelText: "Search for a hero",
+                  labelStyle: GoogleFonts.gruppo(
+                    fontWeight: FontWeight.w900,
+                  ), // <-- Gruppo for label
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -209,7 +226,14 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               )
             else if (_heroes.isEmpty)
-              const Center(child: Text("No heroes found."))
+              Center(
+                child: Text(
+                  "No heroes found.",
+                  style: GoogleFonts.gruppo(
+                    fontWeight: FontWeight.w900,
+                  ), // <-- Gruppo for empty state
+                ),
+              )
             else
               Expanded(
                 child:
@@ -300,15 +324,46 @@ class _HoverButtonState extends State<_HoverButton> {
               const SizedBox(width: 4),
               Text(
                 widget.label,
-                style: TextStyle(
-                  fontSize: 10,
-                  color:
-                      _hovered ? widget.hoverTextColor : widget.normalTextColor,
+                style: GoogleFonts.gruppo(
+                  textStyle: TextStyle(
+                    fontSize: 10,
+                    color:
+                        _hovered
+                            ? widget.hoverTextColor
+                            : widget.normalTextColor,
+                  ),
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _HoverGrow extends StatefulWidget {
+  final Widget child;
+  const _HoverGrow({required this.child});
+
+  @override
+  State<_HoverGrow> createState() => _HoverGrowState();
+}
+
+class _HoverGrowState extends State<_HoverGrow> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedScale(
+        scale: _hovered ? 1.04 : 1.0,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        child: widget.child,
       ),
     );
   }

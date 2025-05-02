@@ -6,9 +6,10 @@ import '../database_helper.dart';
 import '../navigation_drawer.dart' as appnav; // Use a prefix to avoid ambiguity
 import '../widgets/user_deck_widget.dart';
 import '../widgets/bot_deck_widget.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../widgets/result_card_container.dart';
 import '../widgets/end_match_dialog.dart'; // <-- Add this import
+import '../widgets/battle_loader_or_distribute.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BattlePage extends StatefulWidget {
   final String apiKey;
@@ -39,6 +40,8 @@ class _BattlePageState extends State<BattlePage> {
   int diceResult = 0; // Result of the dice roll
   bool isDiceSpinning = false; // Add a flag to track dice spinning state
   bool _showFightGif = false;
+  int? removingUserCardIndex;
+  int? removingBotCardIndex;
 
   @override
   void initState() {
@@ -308,9 +311,16 @@ class _BattlePageState extends State<BattlePage> {
       _showFightGif = false;
     });
 
-    selectedUserCard = userCard;
-    selectedBotCard =
+    final userIndex = userDeck.indexOf(userCard);
+    Map<String, dynamic>? botCard =
         botDeck.isNotEmpty ? botDeck[Random().nextInt(botDeck.length)] : null;
+    final botIndex = botCard != null ? botDeck.indexOf(botCard) : null;
+    setState(() {
+      selectedUserCard = userCard;
+      selectedBotCard = botCard;
+      removingUserCardIndex = userIndex;
+      removingBotCardIndex = botIndex;
+    });
 
     // Initialize points
     int userPoints = 0;
@@ -364,10 +374,19 @@ class _BattlePageState extends State<BattlePage> {
       await DatabaseHelper.instance.addCardToUsed(selectedBotCard!);
     }
 
-    // Remove the used cards from the in-memory decks
+    // Animate removal, then remove from deck after animation
+    await Future.delayed(const Duration(milliseconds: 350));
     setState(() {
-      userDeck.remove(selectedUserCard);
-      botDeck.remove(selectedBotCard);
+      if (removingUserCardIndex != null &&
+          removingUserCardIndex! < userDeck.length) {
+        userDeck.removeAt(removingUserCardIndex!);
+      }
+      if (removingBotCardIndex != null &&
+          removingBotCardIndex! < botDeck.length) {
+        botDeck.removeAt(removingBotCardIndex!);
+      }
+      removingUserCardIndex = null;
+      removingBotCardIndex = null;
     });
 
     _saveGameState();
@@ -533,7 +552,10 @@ class _BattlePageState extends State<BattlePage> {
     } else if (diceResult > 0) {
       return Text(
         "Additional Cards: $diceResult",
-        style: const TextStyle(fontSize: 16),
+        style: GoogleFonts.gruppo(
+          fontSize: 16,
+          fontWeight: FontWeight.w900, // <-- Make it w900
+        ),
       );
     } else {
       return const SizedBox.shrink(); // Empty widget if no result
@@ -563,7 +585,14 @@ class _BattlePageState extends State<BattlePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Battle Page")),
+      appBar: AppBar(
+        title: Text(
+          "Battle Comp",
+          style: GoogleFonts.gruppo(
+            fontWeight: FontWeight.w900, // <-- Make it w900
+          ),
+        ),
+      ),
       drawer: appnav.NavigationDrawer(
         currentPage: appnav.AppPage.battle,
         apiKey: widget.apiKey,
@@ -575,16 +604,7 @@ class _BattlePageState extends State<BattlePage> {
               : Padding(
                 padding: EdgeInsets.zero,
                 child:
-                    isLoadingDeck
-                        ? Center(
-                          child: LoadingAnimationWidget.fourRotatingDots(
-                            color: Colors.blue,
-                            size: 48,
-                          ),
-                        )
-                        : decksReady ||
-                            userDeck.isNotEmpty ||
-                            botDeck.isNotEmpty
+                    decksReady || userDeck.isNotEmpty || botDeck.isNotEmpty
                         ? ScrollConfiguration(
                           behavior: ScrollConfiguration.of(
                             context,
@@ -601,21 +621,24 @@ class _BattlePageState extends State<BattlePage> {
                                     score: userScore,
                                     decksReady: decksReady,
                                     onCardTap: _startBattle,
+                                    removingIndex: removingUserCardIndex,
                                   ),
                                   const SizedBox(height: 20),
                                   _buildResultContainer(),
                                   const SizedBox(height: 20),
-                                  BotDeckWidget(deck: botDeck, score: botScore),
+                                  BotDeckWidget(
+                                    deck: botDeck,
+                                    score: botScore,
+                                    removingIndex: removingBotCardIndex,
+                                  ),
                                 ],
                               ),
                             ),
                           ),
                         )
-                        : Center(
-                          child: ElevatedButton(
-                            onPressed: _generateDeck,
-                            child: const Text("Distribute Cards"),
-                          ),
+                        : BattleLoaderOrDistribute(
+                          isLoadingDeck: isLoadingDeck,
+                          onDistribute: _generateDeck,
                         ),
               ),
           // Fight GIF overlay
@@ -623,11 +646,18 @@ class _BattlePageState extends State<BattlePage> {
             Positioned.fill(
               child: IgnorePointer(
                 child: Center(
-                  child: Image.asset(
-                    'assets/fight.gif',
-                    width: 300,
-                    height: 300,
-                    fit: BoxFit.contain,
+                  child: Builder(
+                    builder: (context) {
+                      final isSmallScreen =
+                          MediaQuery.of(context).size.width < 400;
+                      final double gifSize = isSmallScreen ? 200 : 300;
+                      return Image.asset(
+                        'assets/fight.gif',
+                        width: gifSize,
+                        height: gifSize,
+                        fit: BoxFit.contain,
+                      );
+                    },
                   ),
                 ),
               ),

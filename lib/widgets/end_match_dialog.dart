@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class EndMatchDialog extends StatelessWidget {
@@ -18,9 +17,7 @@ class EndMatchDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Stack(
@@ -43,14 +40,6 @@ class EndMatchDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ],
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: onClose,
-              ),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'pages/battle_page.dart';
 import 'pages/search_page.dart';
 import 'pages/favorite_page.dart';
 import 'pages/about_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum AppPage { home, battle, search, favorites, about }
 
@@ -26,9 +27,23 @@ class NavigationDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue),
-            child: Text("Navigation", style: TextStyle(color: Colors.white)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/final-icon.png', width: 48, height: 48),
+                const SizedBox(width: 16),
+                Text(
+                  "Navigation",
+                  style: GoogleFonts.gruppo(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 28,
+                    color: const Color(0xFF661FFF),
+                  ),
+                ),
+              ],
+            ),
           ),
           _drawerTile(
             context,
@@ -144,9 +159,9 @@ Widget _drawerTile(
       leading: Icon(icon, color: selected ? NavigationDrawer.activeText : null),
       title: Text(
         title,
-        style: TextStyle(
+        style: GoogleFonts.gruppo(
+          fontWeight: FontWeight.w900,
           color: selected ? NavigationDrawer.activeText : null,
-          fontWeight: selected ? FontWeight.normal : null,
         ),
       ),
       selected: selected,

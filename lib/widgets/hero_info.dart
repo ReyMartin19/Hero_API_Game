@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HeroInfo extends StatelessWidget {
   final Map<String, dynamic> hero;
@@ -20,7 +21,14 @@ class HeroInfo extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(hero['name'] ?? 'Hero Info'),
+        title: Text(
+          hero['name'] ?? 'Hero Info',
+          style: GoogleFonts.gruppo(
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
+            color: Colors.black,
+          ),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 1,
@@ -60,9 +68,9 @@ class HeroInfo extends StatelessWidget {
                             Center(
                               child: Text(
                                 hero['name'] ?? 'Unknown',
-                                style: const TextStyle(
+                                style: GoogleFonts.gruppo(
                                   fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w900,
                                   color: Color(0xFF661FFF),
                                 ),
                                 textAlign: TextAlign.center,
@@ -129,9 +137,9 @@ class HeroInfo extends StatelessWidget {
                       Center(
                         child: Text(
                           hero['name'] ?? 'Unknown',
-                          style: const TextStyle(
+                          style: GoogleFonts.gruppo(
                             fontSize: 32,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                             color: Color(0xFF661FFF),
                           ),
                         ),
@@ -200,9 +208,9 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
+      style: GoogleFonts.gruppo(
         fontSize: 20,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w900,
         color: Color(0xFF661FFF),
       ),
     );
@@ -214,7 +222,7 @@ class _PowerStatsList extends StatelessWidget {
   final Map stats;
   const _PowerStatsList({required this.stats});
   static const _statIcons = {
-    "intelligence": "��",
+    "intelligence": "🧠",
     "strength": "💪",
     "speed": "⚡",
     "durability": "🛡️",
@@ -223,7 +231,16 @@ class _PowerStatsList extends StatelessWidget {
   };
   @override
   Widget build(BuildContext context) {
-    if (stats.isEmpty) return const Text("No data.");
+    if (stats.isEmpty)
+      // ignore: curly_braces_in_flow_control_structures
+      return Text(
+        "No data.",
+        style: GoogleFonts.gruppo(
+          fontSize: 16,
+          color: Colors.black,
+          fontWeight: FontWeight.w900,
+        ),
+      );
     return Column(
       children:
           _statIcons.entries.map((entry) {
@@ -240,12 +257,23 @@ class _PowerStatsList extends StatelessWidget {
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
-                  SizedBox(width: 110, child: Text(label)),
+                  SizedBox(
+                    width: 110,
+                    child: Text(
+                      label,
+                      style: GoogleFonts.gruppo(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
                   Text(
                     value,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.gruppo(
+                      fontWeight: FontWeight.w900,
                       fontSize: 15,
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -262,7 +290,16 @@ class _InfoList extends StatelessWidget {
   const _InfoList({required this.data});
   @override
   Widget build(BuildContext context) {
-    if (data.isEmpty) return const Text("No data.");
+    if (data.isEmpty)
+      // ignore: curly_braces_in_flow_control_structures
+      return Text(
+        "No data.",
+        style: GoogleFonts.gruppo(
+          fontSize: 16,
+          color: Colors.black,
+          fontWeight: FontWeight.w900,
+        ),
+      );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:
@@ -281,10 +318,23 @@ class _InfoList extends StatelessWidget {
                     width: 120,
                     child: Text(
                       label[0].toUpperCase() + label.substring(1),
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: GoogleFonts.gruppo(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                  Expanded(child: Text(value)),
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: GoogleFonts.gruppo(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );

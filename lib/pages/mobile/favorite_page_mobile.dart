@@ -45,6 +45,7 @@ class _FavoritePageMobileState extends State<FavoritePageMobile> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
       _loadFavorites();
