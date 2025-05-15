@@ -1,16 +1,56 @@
-# hero_games
+# 🦸‍♂️ Hero API Game - Flutter App
 
-A new Flutter project.
+**Hero API Game** is a card-based battle game built with Flutter. Players face off against a bot using superhero cards fetched from a public API. Cards are compared by powerstats to determine the winner of each round, and dice mechanics add an element of chance for additional strategy.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🎮 Features
 
-A few resources to get you started if this is your first Flutter project:
+- 🔐 **Authentication**
+  - Login system using Hero API credentials
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 🏠 **Homepage**
+  - Displays a "Hero of the Day"
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 🃏 **Battle Comp**
+  - 5-card decks for user and bot
+  - Card vs card battles using powerstats
+  - Dice mechanic triggered only by round winners
+  - Cards removed after use to avoid repeats
+  - Game ends when one deck runs out
+
+- 🔍 **Search Page**
+  - Search for heroes from the API
+  - Bookmark favorite heroes
+
+- 📌 **Bookmarks Page**
+  - View and manage bookmarked heroes
+
+- 🧠 **About Page**
+  - Information about the game and developer
+
+- 💾 **Persistence**
+  - Local storage using SQLite for used cards
+  - SharedPreferences for small data (e.g., API keys)
+
+---
+
+## 🛠️ Tech Stack
+
+- **Flutter** (Dart)
+- **SQLite** – local database for used cards
+- **SharedPreferences** – lightweight local storage
+- **Public Hero API** – data source for hero stats
+- **Provider** – state management
+
+---
+
+## 🧩 How to Run
+
+1. **Clone the Repository**
+
+git clone https://github.com/yourusername/hero-api-game.git
+cd hero-api-game
+code .
+flutter pub get
+flutter run
