@@ -49,7 +49,7 @@
 
 1. **Clone the Repository**
 
-- git clone https://github.com/yourusername/hero-api-game.git
+- git clone https://github.com/ReyMartin19/Hero_API_Game.git
 - cd hero-api-game
 - code .
 - flutter pub get
