@@ -49,8 +49,8 @@
 
 1. **Clone the Repository**
 
-git clone https://github.com/yourusername/hero-api-game.git
-cd hero-api-game
-code .
-flutter pub get
-flutter run
+- git clone https://github.com/yourusername/hero-api-game.git
+- cd hero-api-game
+- code .
+- flutter pub get
+- flutter run
